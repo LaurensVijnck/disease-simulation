@@ -163,7 +163,7 @@ def get_module(path, name_regex, module_name):
                     temp_module_class = getattr(module_spec, obj)  # Check if candidate class is the right class
                     if "initialize" in dir(temp_module_class):  # The correct module contains a function "initialize"
                         module_class = temp_module_class
-                        break
                         # TODO if found go out of all for loops (eg break or continue)
+                        break
 
     return module_class
