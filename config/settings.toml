@@ -16,6 +16,8 @@ terminate_on_zero_infected = true                                   # terminate 
     line_length = 80                                                # line length for formatting
     sink = "console"                                                # sink for writing reporter data (i.e., console or file)
     log_level = ["error", "info"]                                   # types of logs to show, i.e., debug, info, error
+    disease_states = ["Susceptible", "Infected", "Recovered"]       # Disease states
+    num_age_groups_pop = 4                                          # number of population age groups
 
         [simulation.reporter.sinks]                                 # sink specific settigs
 
@@ -33,9 +35,6 @@ terminate_on_zero_infected = true                                   # terminate 
 
         beta_household = 0.05                                       # beta household
         beta_population = 0.6                                       # beta population
-
-        num_age_groups_pop = 4                                      # population age groups
-        num_age_groups_household = 4                                # household age groups
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
     initial_population = "./data/population.csv"                    # location initial population csv

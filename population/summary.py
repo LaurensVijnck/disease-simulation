@@ -15,6 +15,10 @@ class PopulationSummary:
         self._total_per_age_group = defaultdict(int)
         self._prepare()
 
+    def infected_gen(self):
+        for age_group in self._num_infected_per_age_group:
+            yield (age_group, self._num_infected_per_age_group[age_group])
+
     def get_num_susceptible(self, age_group):
         return self._num_susceptible_per_age_group[age_group]
 

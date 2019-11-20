@@ -57,9 +57,9 @@ class Transmission:
         :return: (float) probability of escaping external disease transmission
         """
         escape_prob = 1
-        for age_group in range(self.__num_pop_ag):
+        for (age_group, num_infected) in summary.infected_gen():
             beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1]
-            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** summary.get_num_infected(age_group)
+            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num_infected
 
         return escape_prob
 

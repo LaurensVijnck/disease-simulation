@@ -35,8 +35,8 @@ class Reporter:
         self._line_length = config.get("line_length", 80)
 
         # Disease
-        self._disease_states = ["Susceptible", "Infected", "Recovered"]
-        self.num_pop_age_groups = 4
+        self._disease_states = config.get("disease_states", [])
+        self.num_pop_age_groups = config.get("num_age_groups_pop", 0)
 
     def init(self, curr_date: datetime):
         self._start_time = time.time()
