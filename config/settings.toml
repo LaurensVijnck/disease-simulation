@@ -1,0 +1,44 @@
+# ----------------------------------------------------------------------------------------------------------------------
+[simulation]
+start_date = "2002-1-1"                                             # start date simulation
+end_date = "2002-1-10"                                              # end date simulation
+
+initial_influx = 10000                                              # initial influx
+influx_period_in_days = 2                                           # influx every x days
+num_influx_per_period = 0                                           # daily influx
+
+terminate_on_zero_infected = true                                   # terminate if num. infected reaches zero
+
+    # ------------------------------------------------------------------------------------------------------------------
+    [simulation.reporter]
+    enabled = true                                                  # whether to report while running
+    report_period_in_days = 2                                       # report every x days
+    line_length = 80                                                # line length for formatting
+    sink = "console"                                                # sink for writing reporter data (i.e., console or file)
+    log_level = ["error", "info"]                                   # types of logs to show, i.e., debug, info, error
+
+        [simulation.reporter.sinks]                                 # sink specific settigs
+
+            # File sink
+            [simulation.reporter.sinks.file]                        # file sink specific settings
+            file_name = "output.txt"                                # name of the output file in-case file sink is used
+    # ------------------------------------------------------------------------------------------------------------------
+    [simulation.disease]
+        infection_duration = 4                                      # number of days that the disease lasts
+
+        [simulation.disease.transmission]
+        pop_matrix = "./data/pop_contact.csv"                       # location population contact matrix
+        hh_matrix = "./data/hh_contact_no_children.csv"             # location household contact matrix
+        hh_matrix_children = "./data/hh_contact_children.csv"       # location household with children contact matrix
+
+        beta_household = 0.05                                       # beta household
+        beta_population = 0.6                                       # beta population
+
+        num_age_groups_pop = 4                                      # population age groups
+        num_age_groups_household = 4                                # household age groups
+    # ------------------------------------------------------------------------------------------------------------------
+    [simulation.log_player]
+    initial_population = "./data/population.csv"                    # location initial population csv
+    event_log = "./data/event_log_corrected.csv"                    # location demographic events log
+    date_format = "%Y-%m-%d"                                        # date format used in population and events log
+# ----------------------------------------------------------------------------------------------------------------------
