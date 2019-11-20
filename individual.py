@@ -78,5 +78,4 @@ class Individual:
         """
         id = int(event["ID"])
         hh_id = int(event["HH_ID"])
-        # TODO: Insert correct population and household age_groups
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), int(event["sex"]), 'SUS', 1, 1, hh_id, event["hh_position"])
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), int(event["sex"]), 'SUS', int(event["age_group_pop"]), int(event["age_group_hh"]), hh_id, event["hh_position"])

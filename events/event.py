@@ -58,8 +58,7 @@ class AGTransitionEventHandler(EventHandler):
     def process(self):
         individual = self._population.get(int(self._event["ID"]))
         individual.set_population_age_group(int(self._event["age_group_pop"]))
-        # TODO Remove this min
-        individual.set_household_age_group(min(int(self._event["age_group_hh"]), 4))
+        individual.set_household_age_group(int(self._event["age_group_hh"]))
 
 
 class HHTransitionEventHandler(EventHandler):
