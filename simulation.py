@@ -44,6 +44,7 @@ class Simulation:
         Function responsible for delegating the simulation.
         """
         simulation_curr = self.simulation_start
+        terminated_prematurely = False
         self.reporter.init(simulation_curr)
         self.disease_influx(self.initial_influx, simulation_curr)
         self.reporter.info(f"Initial influx of {self.initial_influx} individuals.")
@@ -65,6 +66,7 @@ class Simulation:
                 summary = PopulationSummary(self.population)
                 self.reporter.set_population_summary(summary)
                 self.reporter.info("Prematurely simulation, number of infected individuals reached zero.")
+                terminated_prematurely = True
                 break
 
             # Fast forward
@@ -72,6 +74,9 @@ class Simulation:
 
             # Prepare next iteration
             simulation_curr += dt.timedelta(days=1)
+
+        if not terminated_prematurely:
+            self.reporter.info(f"Simulation reached end date '{self.simulation_end}', terminating...")
 
         self.reporter.final_report()
         self.reporter.teardown()

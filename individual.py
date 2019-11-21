@@ -78,4 +78,5 @@ class Individual:
         """
         id = int(event["ID"])
         hh_id = int(event["HH_ID"])
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), int(event["sex"]), 'SUS', int(event["age_group_pop"]), int(event["age_group_hh"]), hh_id, event["hh_position"])
+        sex = 1 if event["sex"] != "M" else 2
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, 'SUS', int(event["age_group_pop"]), int(event["age_group_hh"]), hh_id, event["hh_position"])

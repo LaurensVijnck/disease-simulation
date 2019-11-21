@@ -43,7 +43,6 @@ class PopulationSummary:
     def get_adjustment(self, age_group):
         return self._initial_summary.get_total(age_group) / max(self._total_per_age_group[age_group], 1)
 
-
     def _prepare(self):
         for individual in self._population.individual_gen():
 
