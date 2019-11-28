@@ -31,13 +31,13 @@ class Simulation:
         # Initialize Population
         self.population = Population()
 
-        # Initialize disease
-        disease_config = config.get("disease")
-        self.disease = Disease(disease_config, self.population, self.reporter)
-
         # Initialize EventLogPlayer
         player_config = config.get("log_player")
         self.log_player = EventLogPlayer(player_config, self.population, self.reporter)
+
+        # Initialize disease
+        disease_config = config.get("disease")
+        self.disease = Disease(disease_config, self.population, self.reporter)
 
     def run(self):
         """
@@ -76,7 +76,7 @@ class Simulation:
             simulation_curr += dt.timedelta(days=1)
 
         if not terminated_prematurely:
-            self.reporter.info(f"Simulation reached end date '{self.simulation_end}', terminating...")
+            self.reporter.info(f"Simulation reached end date '{self.simulation_end.strftime('%Y-%m-%d')}', terminating...")
 
         self.reporter.final_report()
         self.reporter.teardown()

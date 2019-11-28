@@ -54,10 +54,10 @@ class Reporter:
         self._population_summary = summary
 
     def set_iteration(self, curr_date: datetime):
-        if curr_date == self._initial_iteration:
-            return
         self._iteration = curr_date
-        if relativedelta(self._initial_iteration, self._iteration).days % self._reporting_period_in_days == 0:
+
+        if curr_date != self._initial_iteration and \
+                relativedelta(self._initial_iteration, self._iteration).days % self._reporting_period_in_days == 0:
             self.report()
 
     def add_event(self, event_type):

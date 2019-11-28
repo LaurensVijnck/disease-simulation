@@ -45,6 +45,7 @@ class PopulationSummary:
 
     def _prepare(self):
         for individual in self._population.individual_gen():
+            self._total_per_age_group[individual.get_population_age_group()] += 1
 
             if individual.is_susceptible():
                 self._num_susceptible += 1
@@ -57,5 +58,3 @@ class PopulationSummary:
             if individual.is_recovered():
                 self._num_recovered += 1
                 self._num_recovered_per_age_group[individual.get_population_age_group()] += 1
-
-            self._total_per_age_group[individual.get_population_age_group] += 1

@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
 start_date = "2002-1-1"                                             # start date simulation
-end_date = "2002-1-10"                                              # end date simulation
+end_date = "2002-1-1"                                               # end date simulation
 
-initial_influx = 10000                                              # initial influx
+initial_influx = 100                                                # initial influx
 influx_period_in_days = 2                                           # influx every x days
 num_influx_per_period = 0                                           # daily influx
 

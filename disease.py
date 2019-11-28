@@ -15,7 +15,7 @@ class Disease:
         self.infection_duration = config.get("infection_duration", 3)
 
         # Compute initial summary
-        self.initial_summary = PopulationSummary(population)
+        self.initial_summary = PopulationSummary(self.population)
 
         # Initialize Transmission model
         transmission_config = config.get("transmission")

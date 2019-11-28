@@ -90,3 +90,12 @@ class Population:
         :return: (Individual) individual
         """
         return self.__population[individual_id]
+
+    def size(self):
+        """
+        Function to retrieve the size of the population, i.e.,
+        the number of individuals.
+
+        :return: (number) number of individuals in the population
+        """
+        return len(self.__population)
