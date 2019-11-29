@@ -95,7 +95,7 @@ class Reporter:
             msg += "\n"
             msg += '-' * self._line_length + "\n"
 
-            for ag in range(self.num_pop_age_groups):
+            for ag in range(1, self.num_pop_age_groups + 1):
                 msg += self._pad(str(ag), 12) + " "
                 msg += self._pad(str(self._population_summary.get_num_susceptible(ag)), 12) + " "
                 msg += self._pad(str(self._population_summary.get_num_infected(ag)), 12) + " "
