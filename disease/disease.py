@@ -22,7 +22,7 @@ class Disease:
 
         # Initialize Transmission model
         transmission_config = config.get("transmission")
-        self.__transmission = Transmission(transmission_config)
+        self.__transmission = Transmission(transmission_config, global_config)
 
         # Compute initial summary
         self.__initial_summary = PopulationSummary(self.__population)

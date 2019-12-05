@@ -10,7 +10,8 @@ class Transmission:
     """
     Class that represents the transmission model.
     """
-    def __init__(self, config):
+    def __init__(self, config, global_config):
+        random.seed(global_config["seed"])
         self.__num_pop_ag = config.get("num_age_groups_pop")
         self.__num_hh_ag = config.get("num_age_groups_household")
         self.__beta_pop = config.get("beta_population")

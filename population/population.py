@@ -4,11 +4,11 @@ from population.individual import Individual
 
 
 class Population:
-    def __init__(self):
+    def __init__(self, global_config):
+        random.seed(global_config["seed"])
         self.__population = dict()
         self.__households = dict()
 
-    # TODO: Seed this?
     def random_gen(self, amount):
         """
         Generator to retrieve a number of random individuals in the population.
