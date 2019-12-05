@@ -73,7 +73,7 @@ class DiseaseLogger:
 
             self.__inf_log.writerow({
                 "date_infected": date_formatted,
-                "influx": influx,
+                "influx": int(influx),
                 "id": individual.get_id(),
                 "HH_ID": household.get_id(),
                 "sex": individual.get_sex(),
