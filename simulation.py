@@ -90,6 +90,6 @@ class Simulation:
         :param curr_date: (datetime) date at which people are infected
         """
         for individual in self.population.random_gen(amount):
-            self.disease.set_infected(individual, curr_date)
+            self.disease.set_infected(individual, curr_date, influx=True)
 
 

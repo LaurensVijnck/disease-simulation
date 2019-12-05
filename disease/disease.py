@@ -63,15 +63,15 @@ class Disease:
             (date, individual) = self.__recovery_queue.popleft()
             individual.set_disease_state('REC')
 
-    def set_infected(self, individual: Individual, date: datetime):
+    def set_infected(self, individual: Individual, date: datetime, influx=False):
         """
         Function to infect a specific individual, both the recovery
         queue and the population are updated accordingly.
 
-        :param household: (HouseHold) household to which the individual belongs
         :param individual: (Individual) individual to infect
         :param date: (number) date of infection
+        :param influx: (boolean) whether infection occurred due to influx
         """
         individual.set_disease_state('INF')
-        self.__disease_logger.log(individual, date)
+        self.__disease_logger.log(individual, date, influx)
         self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))

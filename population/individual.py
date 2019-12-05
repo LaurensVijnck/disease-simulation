@@ -77,6 +77,5 @@ class Individual:
         :return: (individual) as specified in the events
         """
         id = int(event["ID"])
-        hh_id = int(event["HH_ID"])
         sex = 1 if event["sex"] != "M" else 2
         return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, 'SUS', 1, 1, event["hh_position"])

@@ -39,7 +39,7 @@ class AddToPopEventHandler(EventHandler):
     """
     def process(self):
         individual = Individual.create(self._event, self._date_format)
-        self._population.add(individual, individual.get_hh_id())
+        self._population.add(individual, self._event["HH_ID"])
 
 
 class RemoveFromPopEventHandler(EventHandler):

@@ -15,10 +15,10 @@ class DiseaseLogger:
             self.__output_file = open(self.__output_file_name, "w")
             self.__csv_writer = csv.writer(self.__output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-    def log(self, individual: Individual, date: datetime):
+    def log(self, individual: Individual, date: datetime, influx):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
-            self.__csv_writer.writerow([date_formatted, individual.get_id()])
+            self.__csv_writer.writerow([date_formatted, individual.get_id(), influx])
 
     def __del__(self):
         self.__output_file.close()
