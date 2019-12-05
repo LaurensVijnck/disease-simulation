@@ -17,8 +17,9 @@ class Simulation:
     """
     def __init__(self, config, global_config):
         # Parse configuration
-        self.simulation_start = datetime.strptime(config.get("start_date"), "%Y-%m-%d")
-        self.simulation_end = datetime.strptime(config.get("end_date"), "%Y-%m-%d")
+        self.date_format = global_config.get("date_format", "%Y-%m-%d")
+        self.simulation_start = datetime.strptime(config.get("start_date"), self.date_format)
+        self.simulation_end = datetime.strptime(config.get("end_date"), self.date_format)
         self.initial_influx = config.get("initial_influx", 0)
         self.num_influx_per_period = config.get("num_influx_per_period", 0)
         self.influx_period_in_days = config.get("influx_period_in_days", 1)
@@ -76,7 +77,7 @@ class Simulation:
             simulation_curr += dt.timedelta(days=1)
 
         if not terminated_prematurely:
-            self.reporter.info(f"Simulation reached end date '{self.simulation_end.strftime('%Y-%m-%d')}', terminating...")
+            self.reporter.info(f"Simulation reached end date '{self.simulation_end.strftime(self.date_format)}', terminating...")
 
         self.reporter.final_report()
         self.reporter.teardown()
@@ -89,7 +90,6 @@ class Simulation:
         :param curr_date: (datetime) date at which people are infected
         """
         for individual in self.population.random_gen(amount):
-            # TODO Fix household
             self.disease.set_infected(individual, curr_date)
 
 

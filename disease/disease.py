@@ -48,7 +48,7 @@ class Disease:
                     continue
 
                 if self.__transmission.occurs(individual, household, summary):
-                    self.set_infected(individual, household, curr_date)
+                    self.set_infected(individual, curr_date)
 
         return len(self.__recovery_queue) > 0
 
@@ -63,7 +63,7 @@ class Disease:
             (date, individual) = self.__recovery_queue.popleft()
             individual.set_disease_state('REC')
 
-    def set_infected(self, individual: Individual, household: HouseHold, date: datetime):
+    def set_infected(self, individual: Individual, date: datetime):
         """
         Function to infect a specific individual, both the recovery
         queue and the population are updated accordingly.
@@ -73,5 +73,5 @@ class Disease:
         :param date: (number) date of infection
         """
         individual.set_disease_state('INF')
-        self.__disease_logger.log(individual, household, date)
+        self.__disease_logger.log(individual, date)
         self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))
