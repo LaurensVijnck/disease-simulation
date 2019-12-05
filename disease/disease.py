@@ -4,7 +4,6 @@ from collections import deque
 from disease.logger import DiseaseLogger
 from population.individual import Individual
 from population.population import Population
-from population.household import HouseHold
 from population.summary import PopulationSummary
 from reporter import Reporter
 from disease.transmission import Transmission
@@ -39,6 +38,7 @@ class Disease:
         """
         summary = PopulationSummary(self.__population, self.__initial_summary)
         self.__reporter.set_population_summary(summary)
+        self.__disease_logger.log_summary(curr_date, summary)
         self.process_recovery_queue(curr_date)
         for household in self.__population.household_gen():
             household.compute_metrics(curr_date, self.__age_child_limit)
@@ -73,5 +73,5 @@ class Disease:
         :param influx: (boolean) whether infection occurred due to influx
         """
         individual.set_disease_state('INF')
-        self.__disease_logger.log(individual, date, influx)
+        self.__disease_logger.log_infection(individual, date, influx)
         self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))

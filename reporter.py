@@ -9,6 +9,10 @@ from population.summary import PopulationSummary
 import os
 
 
+def _pad(target_str, dest_len):
+    return target_str + " " * max(0,  dest_len - len(target_str))
+
+
 class Reporter:
     def __init__(self, config, global_config):
         self._start_time = 0
@@ -36,11 +40,9 @@ class Reporter:
         self._line_length = config.get("line_length", 80)
 
         # Disease
-        self._disease_states = config.get("disease_states", [])
-        self.num_pop_age_groups = config.get("num_age_groups_pop", 0)
-
-        # Global
         self.__date_format = global_config.get("date_format", "%Y-%m-%d")
+        self.__disease_states = global_config.get("disease_states", [])
+        self.__num_pop_age_groups = global_config.get("num_age_groups_pop", 0)
 
     def init(self, curr_date: datetime):
         self._start_time = time.time()
@@ -80,60 +82,60 @@ class Reporter:
 
     def report(self, force=False):
         if force or self._enabled:
-            self._end_time = time.time()
-            elapsed_time = self._end_time - self._start_time
-            elapsed_time_formatted = str(dt.timedelta(seconds=elapsed_time))
-            iteration = self._iteration.strftime(self.__date_format)
+            self._sink.write(self._format_report())
 
-            msg = "\n"
-            msg += "=" * self._line_length + "\n"
-            msg += f"Iteration: {iteration} \n"
-            msg +=  "=" * self._line_length + "\n"
-            msg += "Population: Current distribution" + "\n"
-            msg += '=' * self._line_length + "\n"
+    def _format_report(self):
+        self._end_time = time.time()
+        elapsed_time = self._end_time - self._start_time
+        elapsed_time_formatted = str(dt.timedelta(seconds=elapsed_time))
+        iteration = self._iteration.strftime(self.__date_format)
 
-            msg += self._pad("Age group", 12) + " "
-            for state in self._disease_states:
-                msg += self._pad(state, 12) + " "
+        msg = "\n"
+        msg += "=" * self._line_length + "\n"
+        msg += f"Iteration: {iteration} \n"
+        msg += "=" * self._line_length + "\n"
+        msg += "Population: Current distribution" + "\n"
+        msg += '=' * self._line_length + "\n"
 
-            msg += "\n"
-            msg += '-' * self._line_length + "\n"
+        msg += _pad("Age group", 12) + " "
+        for state in self.__disease_states:
+            msg += _pad(state, 12) + " "
 
-            for ag in range(1, self.num_pop_age_groups + 1):
-                msg += self._pad(str(ag), 12) + " "
-                msg += self._pad(str(self._population_summary.get_num_susceptible(ag)), 12) + " "
-                msg += self._pad(str(self._population_summary.get_num_infected(ag)), 12) + " "
-                msg += self._pad(str(self._population_summary.get_num_recovered(ag)), 12) + "\n"
+        msg += "\n"
+        msg += '-' * self._line_length + "\n"
 
-            msg += '-' * self._line_length + "\n"
-            msg += self._pad("total", 12) + " "
-            msg += self._pad(str(self._population_summary.get_total_susceptible()), 12) + " "
-            msg += self._pad(str(self._population_summary.get_total_infected()), 12) + " "
-            msg += self._pad(str(self._population_summary.get_total_recovered()), 12) + "\n"
+        for ag in range(1, self.__num_pop_age_groups + 1):
+            msg += _pad(str(ag), 12) + " "
+            msg += _pad(str(self._population_summary.get_num_susceptible(ag)), 12) + " "
+            msg += _pad(str(self._population_summary.get_num_infected(ag)), 12) + " "
+            msg += _pad(str(self._population_summary.get_num_recovered(ag)), 12) + "\n"
 
-            msg += "=" * self._line_length + "\n"
+        msg += '-' * self._line_length + "\n"
+        msg += _pad("total", 12) + " "
+        msg += _pad(str(self._population_summary.get_total_susceptible()), 12) + " "
+        msg += _pad(str(self._population_summary.get_total_infected()), 12) + " "
+        msg += _pad(str(self._population_summary.get_total_recovered()), 12) + "\n"
 
-            msg += f"Log: Processed {self._event_count} events in {elapsed_time}s.\n"
-            msg += '-' * self._line_length + "\n"
+        msg += "=" * self._line_length + "\n"
 
-            for event_type in self._event_count_per_type:
-                msg += f"\tProcessed {self._event_count_per_type[event_type]} {event_type} events.\n"
+        msg += f"Log: Processed {self._event_count} events in {elapsed_time}s.\n"
+        msg += '-' * self._line_length + "\n"
 
-            msg += "-" * self._line_length + "\n"
-            msg += f"Elapsed Time: {elapsed_time_formatted}\n"
-            msg += '-' * self._line_length + "\n"
-            msg += f"Total events: {self._event_count}\n"
-            msg += f"Total errors: {self._error_count}\n"
+        for event_type in self._event_count_per_type:
+            msg += f"\tProcessed {self._event_count_per_type[event_type]} {event_type} events.\n"
 
-            for event_type in self._error_count_per_type:
-                msg += f"\t {self._error_count_per_type[event_type]} errors in {event_type} events.\n"
+        msg += "-" * self._line_length + "\n"
+        msg += f"Elapsed Time: {elapsed_time_formatted}\n"
+        msg += '-' * self._line_length + "\n"
+        msg += f"Total events: {self._event_count}\n"
+        msg += f"Total errors: {self._error_count}\n"
 
-            msg += "=" * self._line_length + "\n"
+        for event_type in self._error_count_per_type:
+            msg += f"\t {self._error_count_per_type[event_type]} errors in {event_type} events.\n"
 
-            self._sink.write(msg)
+        msg += "=" * self._line_length + "\n"
 
-    def _pad(self, target_str, dest_len):
-        return target_str + " " * max(0,  dest_len - len(target_str))
+        return msg
 
 
 def get_sink_module(sink_name):

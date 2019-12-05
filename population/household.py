@@ -12,6 +12,7 @@ class HouseHold:
         self.__num_infected = 0
         self.__num_infected_per_ag = defaultdict(int)
         self.__num_infected_per_ag_per_sex = defaultdict(int)
+        self.__age_distribution_inf = defaultdict(int)
         self.__members = []
 
     def get_id(self):
@@ -64,12 +65,17 @@ class HouseHold:
         return len(self.__members)
 
     def get_num_infected(self):
+        """
+       Function to retrieve the number of infected people in the household.
+
+       :return: (number) number of infected people
+       """
         return self.__num_infected
 
     def get_num_infected_ag_sex(self, hh_age_group, sex):
         """
-        Function to retrieve the number of infected people, per household
-        age group and per sex, in the household.
+        Function to retrieve the number of infected people
+        per age group and per sex, in the household.
 
         :param hh_age_group: (number) household age group
         :param sex: (sex) sex of individuals
@@ -97,6 +103,15 @@ class HouseHold:
         """
         return self.__num_infected_per_ag[hh_age_group]
 
+    def get_infected_age_distribution(self):
+        """
+        Function to retrieve an age distribution of infected
+        individuals in the household.
+
+        :return: (defaultdict) age distribution
+        """
+        return self.__age_distribution_inf
+
     def compute_metrics(self, curr_date, max_child_age):
         """
         Function to compute the metrics of the household for the given date.
@@ -105,12 +120,14 @@ class HouseHold:
         self.__num_infected = 0
         self.__num_infected_per_ag = defaultdict(int)
         self.__num_infected_per_ag_per_sex = defaultdict(int)
+        self.__age_distribution_inf = defaultdict(int)
 
         for ind in self.__members:
             if ind.is_infected():
                 self.__num_infected += 1
                 self.__num_infected_per_ag[ind.get_household_age_group()] += 1
                 self.__num_infected_per_ag_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
+                self.__age_distribution_inf[ind.get_age(curr_date)] += 1
 
             if ind.is_child(curr_date, max_child_age):
                 self.__num_children += 1

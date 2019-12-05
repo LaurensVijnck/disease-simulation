@@ -1,6 +1,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [global]
     date_format = "%Y-%m-%d"                                        # date format used globally
+    disease_states = ["Susceptible", "Infected", "Recovered"]       # Disease states
+    num_age_groups_pop = 4                                          # number of population age groups
+    num_age_groups_hh = 4                                           # number of household age groups
 
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
@@ -18,16 +21,15 @@ terminate_on_zero_infected = true                                   # terminate 
     enabled = true                                                  # whether to report while running
     report_period_in_days = 2                                       # report every x days
     line_length = 80                                                # line length for formatting
-    sink = "console"                                                # sink for writing reporter data (i.e., console or file)
+
+    sink = "console"                                                # sink for writing reporter data
     log_level = ["error", "info"]                                   # types of logs to show, i.e., debug, info, error
-    disease_states = ["Susceptible", "Infected", "Recovered"]       # Disease states
-    num_age_groups_pop = 4                                          # number of population age groups
 
         [simulation.reporter.sinks]                                 # sink specific settigs
 
             # File sink
             [simulation.reporter.sinks.file]                        # file sink specific settings
-            file_name = "./output/reporter_output.txt"              # name of the output file in-case file sink is used
+            output_file_name = "./output/reporter_output.txt"       # name of the output file in-case file sink is used
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.disease]
         infection_duration = 4                                      # number of days that the disease lasts
@@ -35,7 +37,8 @@ terminate_on_zero_infected = true                                   # terminate 
 
         [simulation.disease.logger]
             enabled = true                                          # enable log creation of infection
-            file_name = "./output/infection_log.csv"                # file to write infection log to
+            inf_log_file_name = "./output/infection_log.csv"        # file to write infection log to
+            sim_log_file_name = "./output/simulation_log.csv"       # file to write simulation log to
 
         [simulation.disease.transmission]
         pop_matrix = "./input/pop_contact.csv"                      # location population contact matrix
