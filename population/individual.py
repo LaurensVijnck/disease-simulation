@@ -64,6 +64,9 @@ class Individual:
     def is_susceptible(self):
         return self.__disease_state == "SUS"
 
+    def get_age(self, current_date: datetime):
+        return relativedelta(current_date, self.__birth_date).years
+
     def is_child(self, current_date: datetime, max_child_age):
         return relativedelta(current_date, self.__birth_date).years < max_child_age
 

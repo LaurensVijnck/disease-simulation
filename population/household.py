@@ -9,8 +9,9 @@ class HouseHold:
     def __init__(self, hh_id):
         self.__hh_id = hh_id
         self.__num_children = 0
-        self.__num_infected = defaultdict(int)
-        self.__num_infected_per_sex = defaultdict(int)
+        self.__num_infected = 0
+        self.__num_infected_per_ag = defaultdict(int)
+        self.__num_infected_per_ag_per_sex = defaultdict(int)
         self.__members = []
 
     def get_id(self):
@@ -62,7 +63,10 @@ class HouseHold:
         """
         return len(self.__members)
 
-    def get_num_infected_by_sex(self, hh_age_group, sex):
+    def get_num_infected(self):
+        return self.__num_infected
+
+    def get_num_infected_ag_sex(self, hh_age_group, sex):
         """
         Function to retrieve the number of infected people, per household
         age group and per sex, in the household.
@@ -71,7 +75,7 @@ class HouseHold:
         :param sex: (sex) sex of individuals
         :return: (number) number of infected people
         """
-        return self.__num_infected_per_sex[(hh_age_group, sex)]
+        return self.__num_infected_per_ag_per_sex[(hh_age_group, sex)]
 
     def infected_by_sex_gen(self):
         """
@@ -80,10 +84,10 @@ class HouseHold:
 
         :return: (generator) through infected by sex
         """
-        for (age_group, sex) in self.__num_infected_per_sex:
-            yield (age_group, sex, self.__num_infected_per_sex[(age_group, sex)])
+        for (age_group, sex) in self.__num_infected_per_ag_per_sex:
+            yield (age_group, sex, self.__num_infected_per_ag_per_sex[(age_group, sex)])
 
-    def get_num_infected(self, hh_age_group):
+    def get_num_infected_ag(self, hh_age_group):
         """
         Function to retrieve the number of infected people, per household
         age group in the household.
@@ -91,20 +95,22 @@ class HouseHold:
         :param hh_age_group: (number) household age group
         :return: (number) number of infected people
         """
-        return self.__num_infected[hh_age_group]
+        return self.__num_infected_per_ag[hh_age_group]
 
     def compute_metrics(self, curr_date, max_child_age):
         """
         Function to compute the metrics of the household for the given date.
         """
         self.__num_children = 0
-        self.__num_infected = defaultdict(int)
-        self.__num_infected_per_sex = defaultdict(int)
+        self.__num_infected = 0
+        self.__num_infected_per_ag = defaultdict(int)
+        self.__num_infected_per_ag_per_sex = defaultdict(int)
 
         for ind in self.__members:
             if ind.is_infected():
-                self.__num_infected[ind.get_household_age_group()] += 1
-                self.__num_infected_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
+                self.__num_infected += 1
+                self.__num_infected_per_ag[ind.get_household_age_group()] += 1
+                self.__num_infected_per_ag_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
 
             if ind.is_child(curr_date, max_child_age):
                 self.__num_children += 1
