@@ -1,11 +1,10 @@
 import csv
 import mysql.connector
-import datetime
 
 from collections import defaultdict
 from events.ExternalEvent import EventHandler
-from household import HouseHold
-from individual import Individual
+from population.household import HouseHold
+from population.individual import Individual
 
 
 class ExternalPopulation:

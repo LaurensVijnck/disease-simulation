@@ -1,8 +1,8 @@
 import csv
 import random
 
-from household import HouseHold
-from individual import Individual
+from population.household import HouseHold
+from population.individual import Individual
 from population.summary import PopulationSummary
 
 

@@ -1,4 +1,4 @@
-from individual import Individual
+from population.individual import Individual
 from population.population import Population
 
 
@@ -70,9 +70,8 @@ class HHTransitionEventHandler(EventHandler):
 
         if not self._event["HH_ID_target"] == 'NA':
             # Individual changed household
-            self._population.remove_from_household(individual, int(self._event["HH_ID"]))
+            self._population.remove_from_household(individual)
             self._population.add_to_household(individual, int(self._event["HH_ID_target"]))
-            individual.set_hh_id(int(self._event["HH_ID_target"]))
 
-        # Individual changed household position
+        # Individual changed solely household position
         individual.set_hh_position(self._event["hh_position_target"])

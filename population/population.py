@@ -1,6 +1,6 @@
 import random
-from household import HouseHold
-from individual import Individual
+from population.household import HouseHold
+from population.individual import Individual
 
 
 class Population:
@@ -45,7 +45,7 @@ class Population:
 
         :param individual: (individual) the individual to remove
         """
-        self.remove_from_household(individual, individual.get_hh_id())
+        self.remove_from_household(individual)
         del self.__population[individual.get_id()]
 
     def add(self, individual: Individual, hh_id):
@@ -68,19 +68,26 @@ class Population:
         """
         if hh_id not in self.__households:
             self.__households[hh_id] = HouseHold(hh_id)
-        self.__households[hh_id].add_member(individual)
 
-    def remove_from_household(self, individual: Individual, hh_id):
+        household = self.__households[hh_id]
+        household.add_member(individual)
+        individual.set_household(household)
+
+    def remove_from_household(self, individual: Individual):
         """
-        Function to remove the given individual from the specified hh_id
+        Function to remove the given individual from their household.
 
         :param individual: (individual) the individual to remove
-        :param hh_id: (number) id of the household to remove the individual from
         """
-        self.__households[hh_id].remove_member(individual)
+        household = individual.get_household()
 
-        if self.__households[hh_id].get_size() == 0:
-            del self.__households[hh_id]
+        if household is not None:
+            self.__households[household.get_id()].remove_member(individual)
+            individual.set_household(None)
+
+            if self.__households[household.get_id()].get_size() == 0:
+                # TODO Should this happen? What in case if events get out of order?
+                del self.__households[household.get_id()]
 
     def get(self, individual_id):
         """
@@ -90,6 +97,15 @@ class Population:
         :return: (Individual) individual
         """
         return self.__population[individual_id]
+
+    def get_household(self, hh_id):
+        """
+        Function to retrieve a specific household from the population.
+
+        :param hh_id: (number) id of the household to retrieve
+        :return: (HouseHold) household
+        """
+        return self.__households[hh_id]
 
     def size(self):
         """

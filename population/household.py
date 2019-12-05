@@ -1,5 +1,5 @@
 from collections import defaultdict
-from individual import Individual
+from population.individual import Individual
 
 
 class HouseHold:
@@ -12,6 +12,14 @@ class HouseHold:
         self.__num_infected = defaultdict(int)
         self.__num_infected_per_sex = defaultdict(int)
         self.__members = []
+
+    def get_id(self):
+        """
+        Function to retrieve the identifier of the household.
+
+        :return: (number) identifier of the household
+        """
+        return self.__hh_id
 
     def member_gen(self):
         """
@@ -85,7 +93,7 @@ class HouseHold:
         """
         return self.__num_infected[hh_age_group]
 
-    def compute_metrics(self, curr_date):
+    def compute_metrics(self, curr_date, max_child_age):
         """
         Function to compute the metrics of the household for the given date.
         """
@@ -98,5 +106,5 @@ class HouseHold:
                 self.__num_infected[ind.get_household_age_group()] += 1
                 self.__num_infected_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
 
-            if ind.is_child(curr_date):
+            if ind.is_child(curr_date, max_child_age):
                 self.__num_children += 1

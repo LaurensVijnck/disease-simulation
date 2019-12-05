@@ -2,7 +2,7 @@ import csv
 
 from datetime import datetime
 from events.event import EventHandler
-from individual import Individual
+from population.individual import Individual
 from population.population import Population
 from reporter import Reporter
 
@@ -11,7 +11,7 @@ class EventLogPlayer:
     """
     Class to process a given event log.
     """
-    def __init__(self, config, population: Population, reporter: Reporter):
+    def __init__(self, config, global_config, population: Population, reporter: Reporter):
         self.__reporter = reporter
         self.__population = population
 
@@ -19,7 +19,7 @@ class EventLogPlayer:
         pop_csv = open(config.get("event_log"), mode='r')
         self.__event_reader = csv.DictReader(pop_csv)
         self.__next_event = next(self.__event_reader)
-        self.__date_format = config.get("date_format", "%Y-%m-%d")
+        self.__date_format = global_config.get("date_format", "%Y-%m-%d")
 
         # Load initial population
         self._load_initial(config.get("initial_population"))

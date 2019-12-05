@@ -9,19 +9,27 @@ class ConfigHandler:
     """
         Load configuration from arguments
     """
+    def __init__(self):
+        self.simulation_config = None
+        self.global_config = None
+        self.config = None
+
     def load_from_args(self):
         args = self.process_args_as_dict()
         config = get_config(args.get("conf"))
         self.config = DeepDict(config)
-
         self._parse_config()
 
     def _parse_config(self):
         # Parse elements in the config file
         self.simulation_config = self.config.deep_get("simulation")
+        self.global_config = self.config.deep_get("global")
 
     def get_simulation_config(self):
         return self.simulation_config
+
+    def get_global_config(self):
+        return self.global_config
 
     @staticmethod
     def process_args_as_dict():

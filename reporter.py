@@ -8,8 +8,9 @@ from dateutil.relativedelta import relativedelta
 from population.summary import PopulationSummary
 import os
 
+
 class Reporter:
-    def __init__(self, config):
+    def __init__(self, config, global_config):
         self._start_time = 0
         self._end_time = 0
         self._event_count = 0
@@ -37,6 +38,9 @@ class Reporter:
         # Disease
         self._disease_states = config.get("disease_states", [])
         self.num_pop_age_groups = config.get("num_age_groups_pop", 0)
+
+        # Global
+        self.__date_format = global_config.get("date_format", "%Y-%m-%d")
 
     def init(self, curr_date: datetime):
         self._start_time = time.time()
@@ -79,7 +83,7 @@ class Reporter:
             self._end_time = time.time()
             elapsed_time = self._end_time - self._start_time
             elapsed_time_formatted = str(dt.timedelta(seconds=elapsed_time))
-            iteration = self._iteration.strftime('%Y-%m-%d')
+            iteration = self._iteration.strftime(self.__date_format)
 
             msg = "\n"
             msg += "=" * self._line_length + "\n"
@@ -152,8 +156,12 @@ def get_module(path, name_regex, module_name):
     """
     modules = glob.glob(os.path.join(path,name_regex))  # Retrieves all files found in specified path (eg sinks/*_sink.py)
     module_class = None
+    module_found = False
 
     for module in modules:  # Iterate each found file to see if specified module can be found (eg pubsub)
+        if module_found:
+            break
+
         if module[len(path):].startswith(module_name):  # Checks if module starts with requested module name
             import_path = module.replace("/", ".").replace("\\", ".").replace(".py", "")  # Transforms to lib path (eg "sinks.pubsub_sink")
             module_spec = importlib.import_module(import_path)  # See (2)
@@ -163,7 +171,7 @@ def get_module(path, name_regex, module_name):
                     temp_module_class = getattr(module_spec, obj)  # Check if candidate class is the right class
                     if "initialize" in dir(temp_module_class):  # The correct module contains a function "initialize"
                         module_class = temp_module_class
-                        # TODO if found go out of all for loops (eg break or continue)
+                        module_found = True
                         break
 
     return module_class

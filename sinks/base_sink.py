@@ -1,6 +1,6 @@
 class BaseSink:
     def __init__(self, config):
-        pass
+        ...
 
     def initialize(self):
         ...

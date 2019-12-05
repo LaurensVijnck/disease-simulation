@@ -6,14 +6,14 @@ class Individual:
     """
     Class that represents an individual in the population.
     """
-    def __init__(self, ID, birth_date: datetime, sex, disease_state, population_age_group, household_age_group, HH_ID, HH_position):
+    def __init__(self, ID, birth_date: datetime, sex, disease_state, population_age_group, household_age_group, HH_position):
         self.__ID = ID
         self.__birth_date = birth_date
         self.__disease_state = disease_state
         self.__sex = sex
         self.__population_age_group = population_age_group
         self.__household_age_group = household_age_group
-        self.__HH_ID = HH_ID
+        self.__household = None
         self.__HH_position = HH_position
 
     def get_disease_sate(self):
@@ -46,11 +46,11 @@ class Individual:
     def set_hh_position(self, hh_position):
         self.__HH_position = hh_position
 
-    def get_hh_id(self):
-        return self.__HH_ID
+    def get_household(self):
+        return self.__household
 
-    def set_hh_id(self, hh_id):
-        self.__HH_ID = hh_id
+    def set_household(self, household):
+        self.__household = household
 
     def get_hh_position(self):
         return self.__HH_position
@@ -64,8 +64,8 @@ class Individual:
     def is_susceptible(self):
         return self.__disease_state == "SUS"
 
-    def is_child(self, current_date: datetime):
-        return relativedelta(current_date, self.__birth_date).years < 18
+    def is_child(self, current_date: datetime, max_child_age):
+        return relativedelta(current_date, self.__birth_date).years < max_child_age
 
     @staticmethod
     def create(event, date_format):
@@ -79,4 +79,4 @@ class Individual:
         id = int(event["ID"])
         hh_id = int(event["HH_ID"])
         sex = 1 if event["sex"] != "M" else 2
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, 'SUS', int(event["age_group_pop"]), int(event["age_group_hh"]), hh_id, event["hh_position"])
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, 'SUS', 1, 1, event["hh_position"])

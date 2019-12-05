@@ -1,7 +1,7 @@
 import datetime as dt
 from datetime import datetime
 
-from disease import Disease
+from disease.disease import Disease
 from population.population import Population
 from population.summary import PopulationSummary
 from reporter import Reporter
@@ -15,7 +15,7 @@ class Simulation:
     is employed. Individuals recover within a specified number of days after infection. Recovery
     is done through a recovery queue for efficiency.
     """
-    def __init__(self, config):
+    def __init__(self, config, global_config):
         # Parse configuration
         self.simulation_start = datetime.strptime(config.get("start_date"), "%Y-%m-%d")
         self.simulation_end = datetime.strptime(config.get("end_date"), "%Y-%m-%d")
@@ -26,18 +26,18 @@ class Simulation:
 
         # Initialize Reporter
         reporter_config = config.get("reporter")
-        self.reporter = Reporter(reporter_config)
+        self.reporter = Reporter(reporter_config, global_config)
 
         # Initialize Population
         self.population = Population()
 
         # Initialize EventLogPlayer
         player_config = config.get("log_player")
-        self.log_player = EventLogPlayer(player_config, self.population, self.reporter)
+        self.log_player = EventLogPlayer(player_config, global_config, self.population, self.reporter)
 
         # Initialize disease
         disease_config = config.get("disease")
-        self.disease = Disease(disease_config, self.population, self.reporter)
+        self.disease = Disease(disease_config, global_config, self.population, self.reporter)
 
     def run(self):
         """
@@ -89,6 +89,7 @@ class Simulation:
         :param curr_date: (datetime) date at which people are infected
         """
         for individual in self.population.random_gen(amount):
+            # TODO Fix household
             self.disease.set_infected(individual, curr_date)
 
 
