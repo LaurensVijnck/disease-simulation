@@ -4,7 +4,7 @@ from sinks.base_sink import BaseSink
 class FileSink(BaseSink):
     def __init__(self, config):
         self.output_file = None
-        self.ouput_file_name = config.get("file_name", None)
+        self.ouput_file_name = config.get("output_file_name", None)
 
     def initialize(self):
         if self.ouput_file_name:
