@@ -1,79 +1,47 @@
 import toml
 import os
+import copy
 
 #
-# DISCLAIMER! Within this script, a version of the config file that you send is hardcoded. Changes to the main configuration file will not be reflected in generated files.
+# Simple script to generate config files with different @{seeds}, based on the specified
+# @{base_config}.
 #
+# Source: https://gist.github.com/pgilad/e8ffd8ce2bde81a1a375e86df77a34ab
+#
+
+# Settings
+from libraries.deep_dict import DeepDict
+
+base_config_file  = "base_config.toml"
+output_dir = "./generated/configs/"
+seeds = [30, 40, 50, 60]
+
+# Open base config
+with open(base_config_file) as source:
+  base_config = toml.load(source)
 
 # Create dir
-outputdir = "./generated/configs/"
-if not os.path.exists(os.path.dirname(outputdir)):
+if not os.path.exists(os.path.dirname(output_dir)):
     try:
-        os.makedirs(os.path.dirname(outputdir))
+        os.makedirs(os.path.dirname(output_dir))
     except:
         pass
 
-seeds = [30, 40, 50] # put your seeds here
-
+# Generate
 for seed in seeds:
-    config = {
-      "global": {
-        "seed": seed,
-        "date_format": "%Y-%m-%d",
-        "disease_states": [
-          "Susceptible",
-          "Infected",
-          "Recovered"
-        ],
-        "num_age_groups_pop": 4,
-        "num_age_groups_hh": 4
-      },
-      "simulation": {
-        "start_date": "2002-1-1",
-        "end_date": "2002-1-2",
-        "initial_influx": 100,
-        "influx_period_in_days": 2,
-        "num_influx_per_period": 0,
-        "terminate_on_zero_infected": True,
-        "reporter": {
-          "enabled": True,
-          "report_period_in_days": 2,
-          "line_length": 80,
-          "sink": "file",
-          "log_level": [
-            "error",
-            "info"
-          ],
-          "sinks": {
-            "file": {
-              "output_file_name": "./output/seed-{}/reporter_output_seed-{}.txt".format(seed, seed)
-            }
-          }
-        },
-        "disease": {
-          "infection_duration": 4,
-          "age_child_limit": 18,
-          "logger": {
-            "enabled": True,
-            "inf_log_file_name": "./output/seed-{}/infection_log_seed-{}.csv".format(seed, seed),
-            "sim_log_file_name": "./output/seed-{}/simulation_log_seed-{}.csv".format(seed, seed)
-          },
-          "transmission": {
-            "pop_matrix": "./input/pop_contact.csv",
-            "hh_matrix": "./input/hh_contact_no_children.csv",
-            "hh_matrix_children": "./input/hh_contact_children.csv",
-            "beta_household": 0.05,
-            "beta_population": 0.6
-          }
-        },
-        "log_player": {
-          "initial_population": "./input/pop.csv",
-          "event_log": "./input/event_log.csv"
-        }
-      }
-    }
+    config = copy.deepcopy(base_config)
+    deepDict = DeepDict(config)
 
-    toml_config = toml.dumps(config)
+    glob_config = deepDict.deep_get("global")
+    glob_config["seed"] = seed
 
-    with open(os.path.join(outputdir, "settings_seed-{}.toml".format(seed)), 'w') as target:
+    reporter_config = deepDict.deep_get("simulation", "reporter", "sinks", "file")
+    reporter_config["output_file_name"] = "./output/seed-{}/reporter_output_seed-{}.txt".format(seed, seed)
+
+    logger_config = deepDict.deep_get("simulation", "disease", "logger")
+    logger_config["inf_log_file_name"] = "./output/seed-{}/infection_log_seed-{}.csv".format(seed, seed)
+    logger_config["sim_log_file_name"] = "./output/seed-{}/simulation_log_seed-{}.csv".format(seed, seed)
+    toml_config = toml.dumps(deepDict)
+
+    with open(os.path.join(output_dir, "settings_seed-{}.toml".format(seed)), 'w') as target:
         target.write(toml_config)
