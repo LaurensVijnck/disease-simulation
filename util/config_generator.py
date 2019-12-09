@@ -1,6 +1,9 @@
 import toml
 import os
 
+#
+# DISCLAIMER! Within this script, a version of the config file that you send is hardcoded. Changes to the main configuration file will not be reflected in generated files.
+#
 
 # Create dir
 outputdir = "./generated/configs/"
