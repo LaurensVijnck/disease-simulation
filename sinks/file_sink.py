@@ -1,4 +1,5 @@
 from sinks.base_sink import BaseSink
+import os
 
 
 class FileSink(BaseSink):
@@ -8,6 +9,12 @@ class FileSink(BaseSink):
 
     def initialize(self):
         if self.ouput_file_name:
+            if not os.path.exists(os.path.dirname(self.ouput_file_name)):
+                try:
+                    os.makedirs(os.path.dirname(self.ouput_file_name))
+                except:
+                    pass
+
             self.output_file = open(self.ouput_file_name, "w")
 
     def close(self):

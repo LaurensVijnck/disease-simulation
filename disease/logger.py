@@ -1,6 +1,7 @@
 from population.individual import Individual
 from datetime import datetime
 import csv
+import os
 
 from population.summary import PopulationSummary
 
@@ -57,11 +58,22 @@ class DiseaseLogger:
 
         # Create file
         if self.__enabled and self.__inf_log_file_name:
+            if not os.path.exists(os.path.dirname(self.__inf_log_file_name)):
+                try:
+                    os.makedirs(os.path.dirname(self.__inf_log_file_name))
+                except:
+                    pass
+
             self.__inf_output_file = open(self.__inf_log_file_name, "w")
             self.__inf_log = csv.DictWriter(self.__inf_output_file, fieldnames=inf_cols)
             self.__inf_log.writeheader()
 
         if self.__enabled and self.__sim_log_file_name:
+            if not os.path.exists(os.path.dirname(self.__sim_log_file_name)):
+                try:
+                    os.makedirs(os.path.dirname(self.__sim_log_file_name))
+                except:
+                    pass
             self.__sim_output_file = open(self.__sim_log_file_name, "w")
             self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
             self.__sim_log.writeheader()
