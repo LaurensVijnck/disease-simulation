@@ -3,7 +3,7 @@ from population.population import Population
 
 
 class PopulationSummary:
-    def __init__(self, population: Population, initial_summary=None):
+    def __init__(self, population: Population, initial_summary):
         self._initial_summary = initial_summary
         self._population = population
         self._num_susceptible = 0
@@ -41,7 +41,7 @@ class PopulationSummary:
         return self._total_per_age_group[age_group]
 
     def get_adjustment(self, age_group):
-        return self._initial_summary.get_total(age_group) / max(self._total_per_age_group[age_group], 1)
+        return self._initial_summary[age_group-1] / max(self._total_per_age_group[age_group], 1)
 
     def _prepare(self):
         for individual in self._population.individual_gen():

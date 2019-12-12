@@ -14,7 +14,6 @@ class Disease:
         self.__population = population
         self.__reporter = reporter
         self.__infection_duration = config.get("infection_duration", 3)
-        self.__age_child_limit = config.get("age_child_limit", 18)
 
         # Create disease logger
         logger_config = config.get("logger")
@@ -23,9 +22,6 @@ class Disease:
         # Initialize Transmission model
         transmission_config = config.get("transmission")
         self.__transmission = Transmission(transmission_config, global_config)
-
-        # Compute initial summary
-        self.__initial_summary = PopulationSummary(self.__population)
 
         # Recovery queue
         self.__recovery_queue = deque()
@@ -36,21 +32,28 @@ class Disease:
         Function to apply the disease model on the population as-is. The population
         and recovery queue is updated accordingly.
         """
-        summary = PopulationSummary(self.__population, self.__initial_summary)
+        summary = PopulationSummary(self.__population, self.__population.get_initial_distribution())
         self.__reporter.set_population_summary(summary)
         self.__disease_logger.log_summary(curr_date, summary)
         self.process_recovery_queue(curr_date)
         for household in self.__population.household_gen():
-            household.compute_metrics(curr_date, self.__age_child_limit)
+            household.compute_metrics(curr_date, self.__population.get_age_child_limit())
             for individual in household.member_gen():
 
                 if individual.is_infected() or individual.is_recovered():
                     continue
 
-                if self.__transmission.occurs(individual, household, summary):
-                    self.set_infected(individual, curr_date)
+                transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary)
+                if transmission_occurs:
+                    self.set_infected(individual, curr_date, False, hh_trans, pop_trans)
 
-        return len(self.__recovery_queue) > 0
+    def get_num_infected(self):
+        """
+        Function to retrieve the number of infected individuals
+
+        :return: (num) number of infected individuals
+        """
+        return len(self.__recovery_queue)
 
     def process_recovery_queue(self, max_date: datetime):
         """
@@ -63,15 +66,17 @@ class Disease:
             (date, individual) = self.__recovery_queue.popleft()
             individual.set_disease_state('REC')
 
-    def set_infected(self, individual: Individual, date: datetime, influx=False):
+    def set_infected(self, individual: Individual, date: datetime, influx=False, hh_trans_escp=0, pop_trans_escp=0):
         """
         Function to infect a specific individual, both the recovery
         queue and the population are updated accordingly.
 
+        :param pop_trans_escp: (number) population transmission escape probability
+        :param hh_trans_escp: (number) household transmission escape probability
         :param individual: (Individual) individual to infect
         :param date: (number) date of infection
         :param influx: (boolean) whether infection occurred due to influx
         """
         individual.set_disease_state('INF')
-        self.__disease_logger.log_infection(individual, date, influx)
+        self.__disease_logger.log_infection(individual, date, influx, hh_trans_escp, pop_trans_escp)
         self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))

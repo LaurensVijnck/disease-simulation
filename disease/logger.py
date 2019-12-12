@@ -40,6 +40,8 @@ class DiseaseLogger:
         inf_cols = [
             "date_infected",
             "influx",
+            "hh_trans_escp",
+            "pop_trans_escp",
             "id",
             "HH_ID",
             "sex",
@@ -78,7 +80,7 @@ class DiseaseLogger:
             self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
             self.__sim_log.writeheader()
 
-    def log_infection(self, individual: Individual, date: datetime, influx):
+    def log_infection(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
             household = individual.get_household()
@@ -86,6 +88,8 @@ class DiseaseLogger:
             self.__inf_log.writerow({
                 "date_infected": date_formatted,
                 "influx": int(influx),
+                "hh_trans_escp": hh_trans_escp,
+                "pop_trans_escp": pop_trans_escp,
                 "id": individual.get_id(),
                 "HH_ID": household.get_id(),
                 "sex": individual.get_sex(),

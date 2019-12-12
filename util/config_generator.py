@@ -14,7 +14,7 @@ from libraries.deep_dict import DeepDict
 
 base_config_file  = "base_config.toml"
 output_dir = "./generated/configs/"
-seeds = [30, 40, 50, 60]
+seeds = [30, 40, 50, 60, 70]
 
 # Open base config
 with open(base_config_file) as source:

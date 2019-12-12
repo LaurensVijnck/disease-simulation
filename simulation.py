@@ -3,7 +3,6 @@ from datetime import datetime
 
 from disease.disease import Disease
 from population.population import Population
-from population.summary import PopulationSummary
 from reporter import Reporter
 from events.log import EventLogPlayer
 from dateutil.relativedelta import relativedelta
@@ -30,7 +29,8 @@ class Simulation:
         self.reporter = Reporter(reporter_config, global_config)
 
         # Initialize Population
-        self.population = Population(global_config)
+        reporter_config = config.get("population")
+        self.population = Population(reporter_config, global_config)
 
         # Initialize EventLogPlayer
         player_config = config.get("log_player")
@@ -55,17 +55,14 @@ class Simulation:
             self.reporter.set_iteration(simulation_curr)
 
             # Check whether influx should occur
-            # TODO Verify if influx should also happen in initial loop.
             if self.num_influx_per_period > 0 \
                     and relativedelta(self.simulation_start, simulation_curr).days % self.influx_period_in_days == 0:
                 self.reporter.info(f"Influxed {self.num_influx_per_period} individuals.")
                 self.disease_influx(self.num_influx_per_period, simulation_curr)
 
             # Disease model
-            inf_exists = self.disease.apply_disease_model(simulation_curr)
-            if self.terminate_prematurely and not inf_exists:
-                summary = PopulationSummary(self.population)
-                self.reporter.set_population_summary(summary)
+            self.disease.apply_disease_model(simulation_curr)
+            if self.terminate_prematurely and self.disease.get_num_infected() == 0:
                 self.reporter.info("Prematurely simulation, number of infected individuals reached zero.")
                 terminated_prematurely = True
                 break
@@ -78,8 +75,8 @@ class Simulation:
 
         if not terminated_prematurely:
             self.reporter.info(f"Simulation reached end date '{self.simulation_end.strftime(self.date_format)}', terminating...")
+            self.reporter.final_report()
 
-        self.reporter.final_report()
         self.reporter.teardown()
 
     def disease_influx(self, amount, curr_date: datetime):

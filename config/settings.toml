@@ -9,7 +9,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
 start_date = "2002-1-1"                                             # start date simulation
-end_date = "2002-1-5"                                               # end date simulation
+end_date = "2002-1-15"                                              # end date simulation
 
 initial_influx = 100                                                # initial influx
 influx_period_in_days = 2                                           # influx every x days
@@ -34,7 +34,6 @@ terminate_on_zero_infected = true                                   # terminate 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.disease]
         infection_duration = 4                                      # number of days that the disease lasts
-        age_child_limit = 18                                        # maximum age till individual is considered to be a child (exclusive!)
 
         [simulation.disease.logger]
             enabled = true                                          # enable log creation of infection
@@ -48,6 +47,10 @@ terminate_on_zero_infected = true                                   # terminate 
 
         beta_household = 0.05                                       # beta household
         beta_population = 0.6                                       # beta population
+    # ------------------------------------------------------------------------------------------------------------------
+    [simulation.population]
+        age_child_limit = 18                                        # maximum age till individual is considered to be a child (exclusive!)
+        initial_age_distribution = [36645, 17932, 140646, 55082]    # Initial distribution of individuals (used to compute adjustment)
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
     initial_population = "./input/population.csv"                   # location initial population csv

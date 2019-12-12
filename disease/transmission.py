@@ -31,8 +31,10 @@ class Transmission:
         :return: (boolean) whether disease transmission occurs for the given individual
         """
         p = random.uniform(0, 1)
-        p_inf = 1 - self.__compute_hh_infection_escape_prob(individual, household) * self.__compute_pop_infection_escape_prob(individual, summary)
-        return p < p_inf
+        hh_trans = self.__compute_hh_infection_escape_prob(individual, household)
+        pop_trans = self.__compute_pop_infection_escape_prob(individual, summary)
+        p_inf = 1 - hh_trans * pop_trans
+        return p < p_inf, hh_trans, pop_trans
 
     def __compute_hh_infection_escape_prob(self, individual: Individual, household: HouseHold):
         """
