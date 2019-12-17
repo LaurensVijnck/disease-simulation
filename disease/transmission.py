@@ -6,9 +6,11 @@ from population.household import HouseHold
 from population.individual import Individual
 from population.summary import PopulationSummary
 
+
 def _pad_centered(target_str, dest_len):
     len_diff = max(0, dest_len - len(target_str))
     return " " * math.ceil(len_diff/2) + target_str + " " * math.floor(len_diff/2)
+
 
 class Transmission:
     """
@@ -106,7 +108,7 @@ class Transmission:
         print("  ", end=" ")
         for i in range(dimension):
             for sex in ['F', 'M']:
-                print(_pad_centered(sex, 6), end=" ")
+                print(_pad_centered(sex, 7), end=" ")
         print()
         print("   " + "-" * (8 * dimension * 2 - 1))
 
