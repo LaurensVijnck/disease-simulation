@@ -110,7 +110,7 @@ class Transmission:
             for sex in ['F', 'M']:
                 print(_pad_centered(sex, 7), end=" ")
         print()
-        print("   " + "-" * (8 * dimension * 2 - 1))
+        print("  +" + ("-" * 15 + "+") * dimension)
 
         for i in range(dimension):
             for j, sex in enumerate(['F', 'M']):
@@ -120,7 +120,7 @@ class Transmission:
                         print("{0:.4f}".format(dual_matrix[i][k][j][l]), end=" ")
                     print("| ", end="")
                 print()
-            print("   " + "-" * (8 * dimension * 2 - 1))
+            print("  +" + ("-" * 15 + "+") * dimension)
 
     @staticmethod
     def __parse_nested_contact_matrix(matrix_location):
