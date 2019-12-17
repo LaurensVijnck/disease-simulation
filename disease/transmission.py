@@ -1,10 +1,14 @@
 import csv
 import random
+import math
 
 from population.household import HouseHold
 from population.individual import Individual
 from population.summary import PopulationSummary
 
+def _pad_centered(target_str, dest_len):
+    len_diff = max(0, dest_len - len(target_str))
+    return " " * math.ceil(len_diff/2) + target_str + " " * math.floor(len_diff/2)
 
 class Transmission:
     """
@@ -12,14 +16,20 @@ class Transmission:
     """
     def __init__(self, config, global_config):
         random.seed(global_config["seed"])
-        self.__num_pop_ag = config.get("num_age_groups_pop")
-        self.__num_hh_ag = config.get("num_age_groups_household")
+        self.__num_pop_ag = global_config.get("num_age_groups_pop")
+        self.__num_hh_ag = global_config.get("num_age_groups_hh")
         self.__beta_pop = config.get("beta_population")
         self.__beta_household = config.get("beta_household")
 
         self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None), self.__beta_pop)
         self.__hh_contact = self.__parse_nested_contact_matrix(config.get("hh_matrix", None))
         self.__hh_contact_children = self.__parse_nested_contact_matrix(config.get("hh_matrix_children", None))
+
+        print("\nHousehold with children: \n")
+        self.__print_nested_matrix(self.__hh_contact_children, self.__num_hh_ag)
+
+        print("\nHousehold without children: \n")
+        self.__print_nested_matrix(self.__hh_contact, self.__num_hh_ag)
 
     def occurs(self, individual: Individual, household: HouseHold, summary: PopulationSummary):
         """
@@ -93,13 +103,22 @@ class Transmission:
         :param dual_matrix: (matrix) matrix to print
         :param dimension: (number) dimension of the matrix
         """
+        print("  ", end=" ")
         for i in range(dimension):
-            for j in range(dimension):
-                print(i, j, "\t", end="")
-                for k in [0, 1]:
+            for sex in ['F', 'M']:
+                print(_pad_centered(sex, 6), end=" ")
+        print()
+        print("   " + "-" * (8 * dimension * 2 - 1))
+
+        for i in range(dimension):
+            for j, sex in enumerate(['F', 'M']):
+                print(sex, end=" | ")
+                for k in range(dimension):
                     for l in [0, 1]:
-                        print(dual_matrix[i][j][k][l], end=" : ")
+                        print("{0:.4f}".format(dual_matrix[i][k][j][l]), end=" ")
+                    print("| ", end="")
                 print()
+            print("   " + "-" * (8 * dimension * 2 - 1))
 
     @staticmethod
     def __parse_nested_contact_matrix(matrix_location):
@@ -140,4 +159,5 @@ class Transmission:
             cell.append(row)
 
         return cell
+
 
