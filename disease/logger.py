@@ -97,6 +97,7 @@ class DiseaseLogger:
                 "inf_age_distribution": serialize_age_distribution(household.get_infected_age_distribution()),
                 "num_infected_hh": household.get_num_infected(),
                 "hh_size": household.get_size()
+
             })
 
     def log_summary(self, date: datetime, summary: PopulationSummary):

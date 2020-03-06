@@ -20,6 +20,10 @@ class EventLogPlayer:
         self.__event_reader = csv.DictReader(pop_csv)
         self.__next_event = next(self.__event_reader)
         self.__date_format = global_config.get("date_format", "%Y-%m-%d")
+        self.__num_age_groups_pop = global_config.get("num_age_groups_pop", 0)
+
+        # Compute base age distribution
+        self.__compute_base_age_distribution(config.get('base_population',None))
 
         # Load initial population
         self._load_initial(config.get("initial_population"))
@@ -67,3 +71,18 @@ class EventLogPlayer:
         :param date_str: (string) date string to parse
         """
         return datetime.strptime(date_str, self.__date_format)
+
+
+    # This function is used to compute the base age distribution. This is done because the base age distribution may differ from the initial population.
+    def __compute_base_age_distribution(self, base_csv):
+        result = [0]*self.__num_age_groups_pop
+        with open(base_csv, mode='r') as pop_csv:
+            csv_reader = csv.DictReader(pop_csv)
+            for row in csv_reader:
+                if csv_reader.line_num == 0:
+                    continue
+
+                individual = Individual.create(row, self.__date_format)
+                result[individual.get_population_age_group()-1]+=1
+        self.__reporter.info(f'base_population_computed {result}')
+        self.__population.set_base_distribution(result)

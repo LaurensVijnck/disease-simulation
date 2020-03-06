@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [global]
-    seed = 453                                                        # seed value
+    seed = 0                                                        # seed value
     date_format = "%Y-%m-%d"                                        # date format used globally
     disease_states = ["Susceptible", "Infected", "Recovered"]       # disease states
     num_age_groups_pop = 4                                          # number of population age groups
@@ -8,10 +8,10 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
-start_date = "2010-1-1"                                             # start date simulation
-end_date = "2010-6-30"                                              # end date simulation
+start_date = "2002-1-1"                                             # start date simulation
+end_date = "2002-1-2"                                               # end date simulation
 
-initial_influx = 3                                                # initial influx
+initial_influx = 100                                                # initial influx
 influx_period_in_days = 2                                           # influx every x days
 num_influx_per_period = 0                                           # daily influx
 
@@ -23,22 +23,23 @@ terminate_on_zero_infected = true                                   # terminate 
     report_period_in_days = 2                                       # report every x days
     line_length = 80                                                # line length for formatting
 
-    sink = "console"                                                   # sink for writing reporter data
+    sink = "file"                                                   # sink for writing reporter data
     log_level = ["error", "info"]                                   # types of logs to show, i.e., debug, info, error
 
         [simulation.reporter.sinks]                                 # sink specific settigs
 
             # File sink
             [simulation.reporter.sinks.file]                        # file sink specific settings
-            output_file_name = "./output/reporter_output.txt"       # name of the output file in-case file sink is used
+            output_file_name = "./output/seed-0/reporter_output_seed_0.txt"       # name of the output file in-case file sink is used
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.disease]
         infection_duration = 4                                      # number of days that the disease lasts
+        age_child_limit = 18                                        # maximum age till individual is considered to be a child (exclusive!)
 
         [simulation.disease.logger]
             enabled = true                                          # enable log creation of infection
-            inf_log_file_name = "./output/infection_log.csv"        # file to write infection log to
-            sim_log_file_name = "./output/simulation_log.csv"       # file to write simulation log to
+            inf_log_file_name = "./output/seed-0/infection_log_seed_0.csv"        # file to write infection log to
+            sim_log_file_name = "./output/seed-0/simulation_log_seed_0.csv"       # file to write simulation log to
 
         [simulation.disease.transmission]
         pop_matrix = "./input/pop_contact.csv"                      # location population contact matrix
@@ -46,14 +47,9 @@ terminate_on_zero_infected = true                                   # terminate 
         hh_matrix_children = "./input/hh_contact_children.csv"      # location household with children contact matrix
 
         beta_household = 0.05                                       # beta household
-        beta_population = 0.95                                       # beta population
-    # ------------------------------------------------------------------------------------------------------------------
-    [simulation.population]
-        age_child_limit = 13                                        # maximum age till individual is considered to be a child (exclusive!)
-
+        beta_population = 0.6                                       # beta population
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
-    base_population = "./input/pop2009.csv"                         # Base population is used to compute base age distribution (used to compute adjustment in disease model)
-    initial_population = "./input/pop2009.csv"                      # location initial population csv
-    event_log = "./input/event_log_2010.csv"                        # location demographic events log
+    initial_population = "./input/pop.csv"                   # location initial population csv
+    event_log = "./input/event_log.csv"                   # location demographic events log
 # ----------------------------------------------------------------------------------------------------------------------

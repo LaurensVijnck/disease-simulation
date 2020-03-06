@@ -29,8 +29,8 @@ class Simulation:
         self.reporter = Reporter(reporter_config, global_config)
 
         # Initialize Population
-        reporter_config = config.get("population")
-        self.population = Population(reporter_config, global_config)
+        population_config = config.get("population")
+        self.population = Population(population_config, global_config)
 
         # Initialize EventLogPlayer
         player_config = config.get("log_player")

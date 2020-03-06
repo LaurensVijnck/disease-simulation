@@ -6,10 +6,8 @@ from population.individual import Individual
 class Population:
     def __init__(self, config, global_config):
         random.seed(global_config["seed"])
-
         self.__age_child_limit = config.get("age_child_limit", 18)
-        self.__initial_distribution = config.get("initial_age_distribution", None)
-
+        self.__base_age_distribution = None
         self.__population = dict()
         self.__households = dict()
 
@@ -20,13 +18,16 @@ class Population:
         """
         return self.__age_child_limit
 
-    def get_initial_distribution(self):
+    def set_base_distribution(self, base_distribution):
+        self.__base_age_distribution = base_distribution
+
+    def get_base_distribution(self):
         """
         Function to retrieve initial distribution of the population.
 
         :return: (array) distribution of individuals according to their age group.
         """
-        return self.__initial_distribution
+        return self.__base_age_distribution
 
     def random_gen(self, amount):
         """

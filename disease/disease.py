@@ -32,7 +32,7 @@ class Disease:
         Function to apply the disease model on the population as-is. The population
         and recovery queue is updated accordingly.
         """
-        summary = PopulationSummary(self.__population, self.__population.get_initial_distribution())
+        summary = PopulationSummary(self.__population, self.__population.get_base_distribution())
         self.__reporter.set_population_summary(summary)
         self.__disease_logger.log_summary(curr_date, summary)
         self.process_recovery_queue(curr_date)

@@ -27,10 +27,10 @@ class Transmission:
         self.__hh_contact = self.__parse_nested_contact_matrix(config.get("hh_matrix", None))
         self.__hh_contact_children = self.__parse_nested_contact_matrix(config.get("hh_matrix_children", None))
 
-        print("\nHousehold with children: \n")
+        #print("\nHousehold with children: \n")
         self.__print_nested_matrix(self.__hh_contact_children, self.__num_hh_ag)
 
-        print("\nHousehold without children: \n")
+        #print("\nHousehold without children: \n")
         self.__print_nested_matrix(self.__hh_contact, self.__num_hh_ag)
 
     def occurs(self, individual: Individual, household: HouseHold, summary: PopulationSummary):
