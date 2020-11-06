@@ -9,6 +9,19 @@ from reporter import Reporter
 from disease.transmission import Transmission
 
 
+"""
+Disease related mortality:
+
+1. Is fixed infection duration sufficient? 
+        - otherwise draw from distribution, in this case maintain priority queue for recovery
+2. Model for determining disease related deaths, i.e., concrete formula to derrive probability based on attributes of 'individual/household' (Signe)
+        - Write dead log record for death
+        - Add to summary
+        - Q: How to process deaths? deleted vs. add new disease state, i.e., 'death'
+        - Check program crashes when events for death individual are encounter
+"""
+
+
 class Disease:
     def __init__(self, config, global_config, population: Population, reporter: Reporter):
         self.__population = population
@@ -24,6 +37,7 @@ class Disease:
         self.__transmission = Transmission(transmission_config, global_config)
 
         # Recovery queue
+        # TODO For infection duration based on distribution use a priority queue instead!
         self.__recovery_queue = deque()
 
     # FUTURE: Parallelize this loop.
@@ -64,7 +78,7 @@ class Disease:
         """
         while len(self.__recovery_queue) > 0 and self.__recovery_queue[0][0] <= max_date:
             (date, individual) = self.__recovery_queue.popleft()
-            individual.set_disease_state('REC')
+            individual.set_disease_state('REC') # TODO Define enum for status instead of strings
 
     def set_infected(self, individual: Individual, date: datetime, influx=False, hh_trans_escp=0, pop_trans_escp=0):
         """
@@ -80,3 +94,10 @@ class Disease:
         individual.set_disease_state('INF')
         self.__disease_logger.log_infection(individual, date, influx, hh_trans_escp, pop_trans_escp)
         self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))
+
+    def set_died_from_disease(self, individual: Individual):
+        # Set individual to dying state
+        # Write log record to logger
+        # remove from population
+        # TODO Check if follow-up events from individual won't cause crashes to the program.
+        pass

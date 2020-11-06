@@ -6,6 +6,12 @@ from population.household import HouseHold
 from population.individual import Individual
 from population.summary import PopulationSummary
 
+"""
+Beta value based on the age
+
+    - Concrete example of matrix to be able to implement (Signe)
+"""
+
 
 def _pad_centered(target_str, dest_len):
     len_diff = max(0, dest_len - len(target_str))
