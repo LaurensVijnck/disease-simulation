@@ -30,11 +30,14 @@ class DiseaseLogger:
         self.__enabled = config.get("enabled", False)
         self.__inf_output_file = None
         self.__sim_out_file = None
-        self.__inf_log_file_name = config.get("inf_log_file_name", None)
+        self.__disease_log_out_file = None
+        self.__tans_log_file_name = config.get("tans_log_file_name", None)
         self.__sim_log_file_name = config.get("sim_log_file_name", None)
+        self.__disease_log_file_name = config.get("disease_log_file_name", None)
         self.__date_format = global_config.get("date_format", "%Y-%m-%d")
         self.__inf_log = None
         self.__sim_log = None
+        self.__disease_log = None
 
         # Cols to write
         inf_cols = [
@@ -51,6 +54,7 @@ class DiseaseLogger:
             "hh_size"
         ]
 
+        # TODO Refactor to dynamically add each disease state.
         sim_cols = [
             "iteration",
             "num_susceptible",
@@ -58,15 +62,21 @@ class DiseaseLogger:
             "num_recovered"
         ]
 
-        # Create file
-        if self.__enabled and self.__inf_log_file_name:
-            if not os.path.exists(os.path.dirname(self.__inf_log_file_name)):
+        disease_cols = [
+            "individual_id",
+            "date_change",
+            "disease_state"
+        ]
+
+        # Create files
+        if self.__enabled and self.__tans_log_file_name:
+            if not os.path.exists(os.path.dirname(self.__tans_log_file_name)):
                 try:
-                    os.makedirs(os.path.dirname(self.__inf_log_file_name))
+                    os.makedirs(os.path.dirname(self.__tans_log_file_name))
                 except:
                     pass
 
-            self.__inf_output_file = open(self.__inf_log_file_name, "w")
+            self.__inf_output_file = open(self.__tans_log_file_name, "w")
             self.__inf_log = csv.DictWriter(self.__inf_output_file, fieldnames=inf_cols)
             self.__inf_log.writeheader()
 
@@ -80,7 +90,17 @@ class DiseaseLogger:
             self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
             self.__sim_log.writeheader()
 
-    def log_infection(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
+        if self.__enabled and self.__disease_log_file_name:
+            if not os.path.exists(os.path.dirname(self.__disease_log_file_name)):
+                try:
+                    os.makedirs(os.path.dirname(self.__disease_log_file_name))
+                except:
+                    pass
+            self.__disease_log_out_file = open(self.__disease_log_file_name, "w")
+            self.__disease_log = csv.DictWriter(self.__disease_log_file_name, fieldnames=disease_cols)
+            self.__disease_log.writeheader()
+
+    def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
             household = individual.get_household()
@@ -100,6 +120,15 @@ class DiseaseLogger:
 
             })
 
+    def log_disease_state_change(self, individual: Individual, date: datetime, disease_state):
+        if self.__enabled:
+            date_formatted = date.strftime(self.__date_format)
+            self.__inf_log.writerow({
+                "individual_id": individual.get_id(),
+                "date_change": date_formatted,
+                "disease_state": disease_state
+            })
+
     def log_summary(self, date: datetime, summary: PopulationSummary):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
@@ -112,7 +141,7 @@ class DiseaseLogger:
             })
 
     def __del__(self):
-        if self.__enabled and self.__inf_log_file_name:
+        if self.__enabled and self.__tans_log_file_name:
             self.__inf_output_file.close()
 
         if self.__enabled and self.__sim_log_file_name:

@@ -1,13 +1,13 @@
 import datetime as dt
 from datetime import datetime
-from collections import deque
 from disease.logger import DiseaseLogger
 from population.individual import Individual
 from population.population import Population
 from population.summary import PopulationSummary
 from reporter import Reporter
 from disease.transmission import Transmission
-
+from disease.state_machine import DiseaseStateEnum, DiseaseFSM
+from disease.rolling_deque import RollingDeque
 
 """
 Disease related mortality:
@@ -36,12 +36,14 @@ class Disease:
         transmission_config = config.get("transmission")
         self.__transmission = Transmission(transmission_config, global_config)
 
+        # Initialize the disease automaton
+        self.__disease_fsm = DiseaseFSM()
+
         # Recovery queue
-        # TODO For infection duration based on distribution use a priority queue instead!
-        self.__recovery_queue = deque()
+        self.__disease_deque = RollingDeque()
 
     # FUTURE: Parallelize this loop.
-    def apply_disease_model(self, curr_date: datetime):
+    def spread_disease(self, curr_date: datetime):
         """
         Function to apply the disease model on the population as-is. The population
         and recovery queue is updated accordingly.
@@ -49,17 +51,24 @@ class Disease:
         summary = PopulationSummary(self.__population, self.__population.get_base_distribution())
         self.__reporter.set_population_summary(summary)
         self.__disease_logger.log_summary(curr_date, summary)
-        self.process_recovery_queue(curr_date)
+        self.__process_disease_deque(curr_date)
+
         for household in self.__population.household_gen():
             household.compute_metrics(curr_date, self.__population.get_age_child_limit())
             for individual in household.member_gen():
 
-                if individual.is_infected() or individual.is_recovered():
-                    continue
+                if individual.get_disease_sate() == DiseaseStateEnum.STATE_SUSCEPTIBLE:
 
-                transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary)
-                if transmission_occurs:
-                    self.set_infected(individual, curr_date, False, hh_trans, pop_trans)
+                    transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary)
+                    if transmission_occurs:
+                        self.transmit(individual, curr_date, False, hh_trans, pop_trans)
+
+    def transmit(self, individual: Individual, date: datetime, influx=False, hh_trans=0, pop_trans=0):
+        """
+        Function to call when disease is transmitted to an individual.
+        """
+        self.__disease_logger.log_transmission(individual, date, influx, hh_trans, pop_trans)
+        self.__add_to_disease_deque(individual, date, self.__disease_fsm.get_start_node().get_disease_state())
 
     def get_num_infected(self):
         """
@@ -67,37 +76,34 @@ class Disease:
 
         :return: (num) number of infected individuals
         """
-        return len(self.__recovery_queue)
+        return self.__disease_deque.get_num_elements()
 
-    def process_recovery_queue(self, max_date: datetime):
+    def __add_to_disease_deque(self, individual: Individual, date: datetime, disease_state: DiseaseStateEnum):
         """
-        Function to recover individuals in recovery queue up to the specified
-        date. Both the recovery queue population is updated accordingly.
-
-        :param max_date: (date) date up to which to process the recovery queue
+        Function to add to the disease queue.
         """
-        while len(self.__recovery_queue) > 0 and self.__recovery_queue[0][0] <= max_date:
-            (date, individual) = self.__recovery_queue.popleft()
-            individual.set_disease_state('REC') # TODO Define enum for status instead of strings
 
-    def set_infected(self, individual: Individual, date: datetime, influx=False, hh_trans_escp=0, pop_trans_escp=0):
+        # Log entry
+        self.__disease_logger.log_disease_state_change(individual, date, disease_state)
+
+        # Set disease state for the individual
+        individual.set_disease_state(disease_state)
+
+        # Resolve state to FSM node
+        next_node = self.__disease_fsm.get_node_for_type(disease_state)
+
+        if not next_node.is_end_state():
+
+            # Determine next state and days until next state
+            next_state, days_offset = self.__disease_fsm.get_start_node().get_next_state(individual)
+
+            # Push onto disease deque
+            self.__disease_deque.put_element(date + dt.timedelta(self.__infection_duration), (next_state, individual))
+
+    def __process_disease_deque(self, curr_date: datetime):
         """
-        Function to infect a specific individual, both the recovery
-        queue and the population are updated accordingly.
-
-        :param pop_trans_escp: (number) population transmission escape probability
-        :param hh_trans_escp: (number) household transmission escape probability
-        :param individual: (Individual) individual to infect
-        :param date: (number) date of infection
-        :param influx: (boolean) whether infection occurred due to influx
+        Function to process the disease deque for the current date.
         """
-        individual.set_disease_state('INF')
-        self.__disease_logger.log_infection(individual, date, influx, hh_trans_escp, pop_trans_escp)
-        self.__recovery_queue.append((date + dt.timedelta(self.__infection_duration), individual))
-
-    def set_died_from_disease(self, individual: Individual):
-        # Set individual to dying state
-        # Write log record to logger
-        # remove from population
-        # TODO Check if follow-up events from individual won't cause crashes to the program.
-        pass
+        # Process disease deque up to current date
+        for next_state, individual in self.__disease_deque.get_elements_for_date(curr_date):
+            self.__add_to_disease_deque(individual, curr_date, next_state)

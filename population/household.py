@@ -7,6 +7,7 @@ class HouseHold:
     Class that represents a household.
     """
     def __init__(self, hh_id):
+        self.__is_nursing_home = None # TODO Extract from event log
         self.__hh_id = hh_id
         self.__num_children = 0
         self.__num_infected = 0
@@ -91,7 +92,7 @@ class HouseHold:
         :return: (generator) through infected by sex
         """
         for (age_group, sex) in self.__num_infected_per_ag_per_sex:
-            yield (age_group, sex, self.__num_infected_per_ag_per_sex[(age_group, sex)])
+            yield age_group, sex, self.__num_infected_per_ag_per_sex[(age_group, sex)]
 
     def get_num_infected_ag(self, hh_age_group):
         """

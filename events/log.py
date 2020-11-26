@@ -62,6 +62,7 @@ class EventLogPlayer:
                 individual = Individual.create(row, self.__date_format)
                 num += 1
                 self.__population.add(individual, row["HH_ID"])
+
         self.__reporter.info(f"Pre-loaded population with {num} individuals.")
 
     def __parse_date(self, date_str):
