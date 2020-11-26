@@ -117,6 +117,7 @@ class HouseHold:
         """
         Function to compute the metrics of the household for the given date.
         """
+        # TODO Metrics should group according to the disease state.
         self.__num_children = 0
         self.__num_infected = 0
         self.__num_infected_per_ag = defaultdict(int)

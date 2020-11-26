@@ -97,6 +97,7 @@ class Reporter:
         msg += "Population: Current distribution" + "\n"
         msg += '=' * self._line_length + "\n"
 
+        # TODO Alter to accomodate for dynamic disease states
         msg += _pad("Age group", 12) + " "
         for state in self.__disease_states:
             msg += _pad(state, 12) + " "
