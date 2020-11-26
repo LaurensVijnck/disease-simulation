@@ -56,15 +56,6 @@ class Individual:
     def get_hh_position(self):
         return self.__HH_position
 
-    # def is_infected(self):
-    #     return self.__disease_state == 'INF'
-    #
-    # def is_recovered(self):
-    #     return self.__disease_state == 'REC'
-    #
-    # def is_susceptible(self):
-    #    return self.__disease_state == "SUS"
-
     def get_age(self, current_date: datetime):
         return relativedelta(current_date, self.__birth_date).years
 
@@ -82,4 +73,4 @@ class Individual:
         """
         id = int(event["ID"])
         sex = 1 if event["sex"] != "M" else 2
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_RECOVERED, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"])
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"])
