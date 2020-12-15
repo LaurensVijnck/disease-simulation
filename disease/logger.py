@@ -4,6 +4,7 @@ import csv
 import os
 
 from population.summary import PopulationSummary
+from disease.disease_state import DiseaseStateEnum
 
 
 def serialize_age_distribution(inf_age_distribution):
@@ -55,12 +56,10 @@ class DiseaseLogger:
         ]
 
         # TODO Refactor to dynamically add each disease state.
-        sim_cols = [
-            "iteration",
-            "num_susceptible",
-            "num_infected",
-            "num_recovered"
-        ]
+        sim_cols = ["iteration"]
+        for disease_state in DiseaseStateEnum:
+            sim_cols.append(f"num_{disease_state.name.lower()}")
+
 
         disease_cols = [
             "individual_id",
@@ -69,36 +68,40 @@ class DiseaseLogger:
         ]
 
         # Create files
-        if self.__enabled and self.__tans_log_file_name:
-            if not os.path.exists(os.path.dirname(self.__tans_log_file_name)):
-                try:
-                    os.makedirs(os.path.dirname(self.__tans_log_file_name))
-                except:
-                    pass
+        if self.__enabled:
+            self.__inf_output_file, self.__inf_log = self._initialize_file_sink(self.__tans_log_file_name, inf_cols)
+            self.__sim_output_file, self.__sim_log = self._initialize_file_sink(self.__sim_log_file_name, sim_cols)
+            self.__disease_log_out_file, self.__disease_log = self._initialize_file_sink(self.__tans_log_file_name, disease_cols)
 
-            self.__inf_output_file = open(self.__tans_log_file_name, "w")
-            self.__inf_log = csv.DictWriter(self.__inf_output_file, fieldnames=inf_cols)
-            self.__inf_log.writeheader()
-
-        if self.__enabled and self.__sim_log_file_name:
-            if not os.path.exists(os.path.dirname(self.__sim_log_file_name)):
-                try:
-                    os.makedirs(os.path.dirname(self.__sim_log_file_name))
-                except:
-                    pass
-            self.__sim_output_file = open(self.__sim_log_file_name, "w")
-            self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
-            self.__sim_log.writeheader()
-
-        if self.__enabled and self.__disease_log_file_name:
-            if not os.path.exists(os.path.dirname(self.__disease_log_file_name)):
-                try:
-                    os.makedirs(os.path.dirname(self.__disease_log_file_name))
-                except:
-                    pass
-            self.__disease_log_out_file = open(self.__disease_log_file_name, "w")
-            self.__disease_log = csv.DictWriter(self.__disease_log_file_name, fieldnames=disease_cols)
-            self.__disease_log.writeheader()
+        #     if not os.path.exists(os.path.dirname(self.__tans_log_file_name)):
+        #         try:
+        #             os.makedirs(os.path.dirname(self.__tans_log_file_name))
+        #         except:
+        #             pass
+        #
+        #     self.__inf_output_file = open(self.__tans_log_file_name, "w")
+        #     self.__inf_log = csv.DictWriter(self.__inf_output_file, fieldnames=inf_cols)
+        #     self.__inf_log.writeheader()
+        #
+        # if self.__enabled and self.__sim_log_file_name:
+        #     if not os.path.exists(os.path.dirname(self.__sim_log_file_name)):
+        #         try:
+        #             os.makedirs(os.path.dirname(self.__sim_log_file_name))
+        #         except:
+        #             pass
+        #     self.__sim_output_file = open(self.__sim_log_file_name, "w")
+        #     self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
+        #     self.__sim_log.writeheader()
+        #
+        # if self.__enabled and self.__disease_log_file_name:
+        #     if not os.path.exists(os.path.dirname(self.__disease_log_file_name)):
+        #         try:
+        #             os.makedirs(os.path.dirname(self.__disease_log_file_name))
+        #         except:
+        #             pass
+        #     self.__disease_log_out_file = open(self.__disease_log_file_name, "w")
+        #     self.__disease_log = csv.DictWriter(self.__disease_log_out_file, fieldnames=disease_cols)
+        #     self.__disease_log.writeheader()
 
     def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
         if self.__enabled:
@@ -123,7 +126,7 @@ class DiseaseLogger:
     def log_disease_state_change(self, individual: Individual, date: datetime, disease_state):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
-            self.__inf_log.writerow({
+            self.__disease_log.writerow({
                 "individual_id": individual.get_id(),
                 "date_change": date_formatted,
                 "disease_state": disease_state
@@ -131,14 +134,29 @@ class DiseaseLogger:
 
     def log_summary(self, date: datetime, summary: PopulationSummary):
         if self.__enabled:
-            date_formatted = date.strftime(self.__date_format)
+            el = {"iteration": date.strftime(self.__date_format)}
 
-            self.__sim_log.writerow({
-                "iteration": date_formatted,
-                "num_susceptible": summary.get_total_susceptible(),
-                "num_infected": summary.get_total_infected(),
-                "num_recovered": summary.get_total_recovered()
-            })
+            # Format entry for each disease state
+            for disease_state in DiseaseStateEnum:
+                el[f"num_{disease_state.name.lower()}"] = summary.get_total_for_disease_state(disease_state)
+
+            print(el)
+            self.__sim_log.writerow(el)
+
+
+    @staticmethod
+    def _initialize_file_sink(file_name: str, columns: list):
+        if file_name:
+            if not os.path.exists(os.path.dirname(file_name)):
+                try:
+                    os.makedirs(os.path.dirname(file_name))
+                except:
+                    pass
+            out_file = open(file_name, "w")
+            log = csv.DictWriter(out_file, fieldnames=columns)
+            log.writeheader()
+
+            return out_file, log
 
     def __del__(self):
         if self.__enabled and self.__tans_log_file_name:

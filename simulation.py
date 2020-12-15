@@ -61,7 +61,7 @@ class Simulation:
             # Disease model
             self.disease.spread_disease(simulation_curr)
             if self.terminate_prematurely and self.disease.get_num_infected() == 0:
-                self.reporter.info("Prematurely simulation, number of infected individuals reached zero.")
+                self.reporter.info("Prematurely terminating simulation, number of infected individuals reached zero.")
                 terminated_prematurely = True
                 break
 

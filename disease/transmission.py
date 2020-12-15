@@ -5,6 +5,7 @@ import math
 from population.household import HouseHold
 from population.individual import Individual
 from population.summary import PopulationSummary
+from disease.disease_state import DiseaseStateEnum
 
 """
 Beta value based on the age
@@ -78,7 +79,7 @@ class Transmission:
         :return: (float) probability of escaping external disease transmission
         """
         escape_prob = 1
-        for (age_group, num_infected) in summary.infected_gen():
+        for (age_group, num_infected) in summary.num_infected_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
             beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1]
             escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num_infected
 

@@ -74,8 +74,11 @@ class EventLogPlayer:
         return datetime.strptime(date_str, self.__date_format)
 
 
-    # This function is used to compute the base age distribution. This is done because the base age distribution may differ from the initial population.
     def __compute_base_age_distribution(self, base_csv):
+        """
+         This function is used to compute the base age distribution. This is done because the base age
+         distribution may differ from the initial population (i.e., when it is fast-forwarded).
+        """
         result = [0]*self.__num_age_groups_pop
         with open(base_csv, mode='r') as pop_csv:
             csv_reader = csv.DictReader(pop_csv)

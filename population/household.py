@@ -125,11 +125,12 @@ class HouseHold:
         self.__age_distribution_inf = defaultdict(int)
 
         for ind in self.__members:
-            if ind.is_infected():
-                self.__num_infected += 1
-                self.__num_infected_per_ag[ind.get_household_age_group()] += 1
-                self.__num_infected_per_ag_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
-                self.__age_distribution_inf[ind.get_age(curr_date)] += 1
+
+            # if ind.is_infected():
+            #     self.__num_infected += 1
+            #     self.__num_infected_per_ag[ind.get_household_age_group()] += 1
+            #     self.__num_infected_per_ag_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
+            #     self.__age_distribution_inf[ind.get_age(curr_date)] += 1
 
             if ind.is_child(curr_date, max_child_age):
                 self.__num_children += 1

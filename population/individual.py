@@ -17,25 +17,25 @@ class Individual:
         self.__household = None
         self.__HH_position = HH_position
 
-    def get_disease_sate(self):
+    def get_disease_sate(self) -> DiseaseStateEnum:
         return self.__disease_state
 
     def set_disease_state(self, disease_state):
         self.__disease_state = disease_state
 
-    def get_id(self):
+    def get_id(self) -> int:
         return self.__ID
 
-    def get_birth_date(self):
+    def get_birth_date(self) -> datetime:
         return self.__birth_date
 
-    def get_sex(self):
+    def get_sex(self) -> int:
         return self.__sex
 
-    def get_population_age_group(self):
+    def get_population_age_group(self) -> int:
         return self.__population_age_group
 
-    def get_household_age_group(self):
+    def get_household_age_group(self) -> int:
         return self.__household_age_group
 
     def set_population_age_group(self, pop_age_group):
@@ -53,13 +53,13 @@ class Individual:
     def set_household(self, household):
         self.__household = household
 
-    def get_hh_position(self):
+    def get_hh_position(self) -> str:
         return self.__HH_position
 
-    def get_age(self, current_date: datetime):
+    def get_age(self, current_date: datetime) -> int:
         return relativedelta(current_date, self.__birth_date).years
 
-    def is_child(self, current_date: datetime, max_child_age):
+    def is_child(self, current_date: datetime, max_child_age) -> bool:
         return relativedelta(current_date, self.__birth_date).years < max_child_age
 
     @staticmethod

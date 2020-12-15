@@ -65,6 +65,21 @@ class RecoveredDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the recovered disease state.
     """
+    def __init__(self, state: DiseaseStateEnum, recovered_duration_days: int):
+        super().__init__(state)
+        self._recovered_duration_days = recovered_duration_days
+
+    def is_end_state(self):
+        return False
+
+    def get_next_state(self, individual):
+        return DiseaseStateEnum.STATE_DIED, self._recovered_duration_days
+
+
+class DiedDiseaseStateFSMNode(DiseaseStateFSMNode):
+    """
+    FSM Node to representing the died disease state.
+    """
     def __init__(self, state: DiseaseStateEnum):
         super().__init__(state)
 
@@ -82,8 +97,9 @@ class DiseaseFSM:
 
     def __create_nodes(self):
         self._nodes[DiseaseStateEnum.STATE_EXPOSED] = ExposedDiseaseStateFSMNode(DiseaseStateEnum.STATE_EXPOSED, 2)
-        self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED, 4)
-        self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED)
+        self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED, 2)
+        self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED, 4)
+        self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 
     def get_start_node(self):
         return self._nodes[DiseaseStateEnum.STATE_EXPOSED]
