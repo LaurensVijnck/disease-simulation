@@ -2,7 +2,6 @@
 [global]
     seed = 453                                                      # seed value
     date_format = "%Y-%m-%d"                                        # date format used globally
-    # disease_states = ["Susceptible", "Infected", "Recovered"]
     num_age_groups_pop = 4                                          # number of population age groups
     num_age_groups_hh = 4                                           # number of household age groups
 
@@ -33,8 +32,6 @@ terminate_on_zero_infected = true                                   # terminate 
             output_file_name = "./output/reporter_output.txt"       # name of the output file in-case file sink is used
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.disease]
-        # TODO Remove;
-        infection_duration = 4                                      # number of days that the disease lasts
 
         [simulation.disease.logger]
             enabled = true                                          # enable log creation of infection

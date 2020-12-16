@@ -1,5 +1,6 @@
 from abc import ABC
 from disease.disease_state import DiseaseStateEnum
+import numpy as np
 
 
 class DiseaseStateFSMNode(ABC):
