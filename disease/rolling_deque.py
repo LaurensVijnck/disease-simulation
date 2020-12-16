@@ -7,6 +7,8 @@ class RollingDeque:
     """
     Custom data-structure to maintain a temporal
     set of deque objects.
+
+    Note: not thread safe.
     """
     def __init__(self):
         self._counter = 0
