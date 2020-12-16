@@ -98,11 +98,7 @@ class Reporter:
         msg += "Population: Current distribution" + "\n"
         msg += '=' * self._line_length + "\n"
 
-        # TODO Alter to accomodate for dynamic disease states
         msg += _pad("Age group", 12) + " "
-        # for state in self.__disease_states:
-        #     msg += _pad(state, 12) + " "
-
         for disease_state in DiseaseStateEnum:
             msg += _pad(disease_state.name.lower().split("_")[1], 12) + " "
 
@@ -116,9 +112,6 @@ class Reporter:
                 msg += _pad(str(self._population_summary.get_num_for_disease_state(disease_state, ag)), 12) + " "
 
             msg += "\n"
-            # msg += _pad(str(self._population_summary.get_num_susceptible(ag)), 12) + " "
-            # msg += _pad(str(self._population_summary.get_num_infected(ag)), 12) + " "
-            # msg += _pad(str(self._population_summary.get_num_recovered(ag)), 12) + "\n"
 
         msg += '-' * self._line_length + "\n"
         msg += _pad("total", 12) + " "
@@ -126,9 +119,6 @@ class Reporter:
             msg += _pad(str(self._population_summary.get_total_for_disease_state(disease_state)), 12) + " "
 
         msg += "\n"
-        # msg += _pad(str(self._population_summary.get_total_susceptible()), 12) + " "
-        # msg += _pad(str(self._population_summary.get_total_infected()), 12) + " "
-        # msg += _pad(str(self._population_summary.get_total_recovered()), 12) + "\n"
 
         msg += "=" * self._line_length + "\n"
 

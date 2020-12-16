@@ -55,7 +55,6 @@ class DiseaseLogger:
             "hh_size"
         ]
 
-        # TODO Refactor to dynamically add each disease state.
         sim_cols = ["iteration"]
         for disease_state in DiseaseStateEnum:
             sim_cols.append(f"num_{disease_state.name.lower()}")
@@ -72,36 +71,6 @@ class DiseaseLogger:
             self.__inf_output_file, self.__inf_log = self._initialize_file_sink(self.__tans_log_file_name, inf_cols)
             self.__sim_output_file, self.__sim_log = self._initialize_file_sink(self.__sim_log_file_name, sim_cols)
             self.__disease_log_out_file, self.__disease_log = self._initialize_file_sink(self.__tans_log_file_name, disease_cols)
-
-        #     if not os.path.exists(os.path.dirname(self.__tans_log_file_name)):
-        #         try:
-        #             os.makedirs(os.path.dirname(self.__tans_log_file_name))
-        #         except:
-        #             pass
-        #
-        #     self.__inf_output_file = open(self.__tans_log_file_name, "w")
-        #     self.__inf_log = csv.DictWriter(self.__inf_output_file, fieldnames=inf_cols)
-        #     self.__inf_log.writeheader()
-        #
-        # if self.__enabled and self.__sim_log_file_name:
-        #     if not os.path.exists(os.path.dirname(self.__sim_log_file_name)):
-        #         try:
-        #             os.makedirs(os.path.dirname(self.__sim_log_file_name))
-        #         except:
-        #             pass
-        #     self.__sim_output_file = open(self.__sim_log_file_name, "w")
-        #     self.__sim_log = csv.DictWriter(self.__sim_output_file, fieldnames=sim_cols)
-        #     self.__sim_log.writeheader()
-        #
-        # if self.__enabled and self.__disease_log_file_name:
-        #     if not os.path.exists(os.path.dirname(self.__disease_log_file_name)):
-        #         try:
-        #             os.makedirs(os.path.dirname(self.__disease_log_file_name))
-        #         except:
-        #             pass
-        #     self.__disease_log_out_file = open(self.__disease_log_file_name, "w")
-        #     self.__disease_log = csv.DictWriter(self.__disease_log_out_file, fieldnames=disease_cols)
-        #     self.__disease_log.writeheader()
 
     def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
         if self.__enabled:
