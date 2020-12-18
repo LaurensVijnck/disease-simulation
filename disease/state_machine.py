@@ -117,7 +117,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         dies = random.choice([True, False])
 
         if dies:
-            days_until_demise = np.random.uniform(low=0, high=50, size=None)
+            days_until_demise = np.random.uniform(low=0, high=2, size=None)
             return DiseaseStateEnum.STATE_DIED, days_until_demise
 
         # Determine number of days, be careful with negative state durations.
@@ -164,8 +164,8 @@ class DiseaseFSM:
         # FUTURE: The following nodes can be generated according to a configuration.
         self._nodes[DiseaseStateEnum.STATE_EXPOSED] = ExposedDiseaseStateFSMNode(DiseaseStateEnum.STATE_EXPOSED)
         self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED)
-        self._nodes[DiseaseStateEnum.STATE_ASYMPTOMATIC] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_ASYMPTOMATIC)
-        self._nodes[DiseaseStateEnum.STATE_SYMPTOMATIC] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_SYMPTOMATIC)
+        self._nodes[DiseaseStateEnum.STATE_ASYMPTOMATIC] = AsymptomaticDiseaseStateFSMNode(DiseaseStateEnum.STATE_ASYMPTOMATIC)
+        self._nodes[DiseaseStateEnum.STATE_SYMPTOMATIC] = SymptomaticDiseaseStateFSMNode(DiseaseStateEnum.STATE_SYMPTOMATIC)
         self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED)
         self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 

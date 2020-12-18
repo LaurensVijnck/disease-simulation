@@ -86,7 +86,7 @@ class Disease:
         # Log entry
         self.__disease_logger.log_disease_state_change(individual, date, disease_state)
 
-        # Set disease state for the individual
+        # Set disease state for the individual)
         individual.set_disease_state(disease_state)
 
         # Resolve state to FSM node
