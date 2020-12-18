@@ -3,6 +3,8 @@ from datetime import datetime
 from disease.disease_state import DiseaseStateEnum
 from population.individual import Individual
 import numpy as np
+import math
+import random
 
 
 class DiseaseStateFSMNode(ABC):
@@ -41,19 +43,23 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the exposed disease state.
     """
-    def __init__(self, state: DiseaseStateEnum, exposed_duration_days: int):
+    def __init__(self, state: DiseaseStateEnum):
         super().__init__(state)
-        self.__exposed_duration_days = exposed_duration_days
 
     def get_next_state(self, individual: Individual, current_date: datetime):
-        # amount_of_days = np.random.normal(4, 1, 1)[0]
-        # return DiseaseStateEnum.STATE_INFECTED, self.__infection_duration_days
-        #
-        # if individual.get_household().size() > 10:
-        #     amount_of_days = np.random.normal(5, 1, 1)[0]
-        #     return DiseaseStateEnum.STATE_DIED, amount_of_days
 
-        return DiseaseStateEnum.STATE_INFECTED, self.__exposed_duration_days
+        # Compute duration of the incubation period
+        incubation_duration = max(2, np.random.lognormal(mean=1.43, sigma=0.66, size=None)) # Can we seed numpy randoms?
+
+        # Compute duration of the pre-symptomatic period
+        pre_symptomatic_duration = min(incubation_duration, np.random.gamma(shape=20.52, scale=1.59, size=None))
+
+        # Commute exposed duration
+        exposed_period = math.floor(incubation_duration - pre_symptomatic_duration)
+
+        individual.pre_symptomatic_duration = math.ceil(pre_symptomatic_duration) # FUTURE: Variables specific to the disease model should be stored elsewhere
+
+        return DiseaseStateEnum.STATE_INFECTED, exposed_period
 
     def is_end_state(self):
         return False
@@ -61,18 +67,63 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
 
 class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
-    FSM Node to representing the infected disease state.
+    FSM Node to representing the infected (pre-symptomatic) disease state.
     """
-    def __init__(self, state: DiseaseStateEnum, infection_duration_days: int):
+    def __init__(self, state: DiseaseStateEnum):
         super().__init__(state)
-        self.__infection_duration_days = infection_duration_days
 
     def get_next_state(self, individual: Individual, current_date: datetime):
 
-        # if older_than_x_years and certain_prob:
-        #     return DiseaseStateEnum.STATE_DIED, x
+        # By means of an example; we can perform any kind of computation to decide upon this.
+        becomes_symptomatic = random.choice([True, False])
 
-        return DiseaseStateEnum.STATE_RECOVERED, self.__infection_duration_days
+        if becomes_symptomatic:
+            return DiseaseStateEnum.STATE_SYMPTOMATIC, individual.pre_symptomatic_duration
+
+        return DiseaseStateEnum.STATE_ASYMPTOMATIC, individual.pre_symptomatic_duration
+
+    def is_end_state(self):
+        return False
+
+
+class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
+    """
+    FSM Node to representing the asymptomatic disease state.
+    """
+    def __init__(self, state: DiseaseStateEnum):
+        super().__init__(state)
+
+    def get_next_state(self, individual: Individual, current_date: datetime):
+
+        # Determine number of days, be careful with negative state durations.
+        asymptomatic_duration = max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration)
+
+        return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
+
+    def is_end_state(self):
+        return False
+
+
+class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
+    """
+    FSM Node to representing the symptomatic disease state.
+    """
+    def __init__(self, state: DiseaseStateEnum):
+        super().__init__(state)
+
+    def get_next_state(self, individual: Individual, current_date: datetime):
+
+        # By means of an example; we can perform any kind of computation to decide upon this.
+        dies = random.choice([True, False])
+
+        if dies:
+            days_until_demise = np.random.uniform(low=0, high=50, size=None)
+            return DiseaseStateEnum.STATE_DIED, days_until_demise
+
+        # Determine number of days, be careful with negative state durations.
+        symptomatic_duration = max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration)
+
+        return DiseaseStateEnum.STATE_RECOVERED, symptomatic_duration
 
     def is_end_state(self):
         return False
@@ -87,10 +138,7 @@ class RecoveredDiseaseStateFSMNode(DiseaseStateFSMNode):
         self._recovered_duration_days = recovered_duration_days
 
     def is_end_state(self):
-        return False
-
-    def get_next_state(self, individual: Individual, current_date: datetime):
-        return DiseaseStateEnum.STATE_DIED, self._recovered_duration_days
+        return True
 
 
 class DiedDiseaseStateFSMNode(DiseaseStateFSMNode):
@@ -113,8 +161,10 @@ class DiseaseFSM:
         self.__create_nodes()
 
     def __create_nodes(self):
-        self._nodes[DiseaseStateEnum.STATE_EXPOSED] = ExposedDiseaseStateFSMNode(DiseaseStateEnum.STATE_EXPOSED, 2)
-        self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED, 2)
+
+        # FUTURE: The following nodes can be generated according to a configuration.
+        self._nodes[DiseaseStateEnum.STATE_EXPOSED] = ExposedDiseaseStateFSMNode(DiseaseStateEnum.STATE_EXPOSED)
+        self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED)
         self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED, 4)
         self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 

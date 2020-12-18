@@ -17,6 +17,9 @@ class Individual:
         self.__household = None
         self.__HH_position = HH_position
 
+        # Parameters specific to the disease model, ideally they should be moved elsewhere.
+        self.pre_symptomatic_duration = None
+
     def get_disease_sate(self) -> DiseaseStateEnum:
         return self.__disease_state
 
