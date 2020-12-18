@@ -95,7 +95,7 @@ class Disease:
         if not next_node.is_end_state():
 
             # Determine next state and days until next state
-            next_state, days_offset = next_node.get_next_state(individual)
+            next_state, days_offset = next_node.get_next_state(individual, date)
 
             # Push onto disease deque
             self.__disease_deque.put_element(date + dt.timedelta(self.__infection_duration), (next_state, individual))

@@ -109,7 +109,7 @@ class Population:
                 # TODO Should this happen? What in case if events get out of order?
                 del self.__households[household.get_id()]
 
-    def get(self, individual_id):
+    def get(self, individual_id) -> Individual:
         """
         Function to retrieve a specific individual from the population.
 
@@ -118,7 +118,7 @@ class Population:
         """
         return self.__population[individual_id]
 
-    def get_household(self, hh_id):
+    def get_household(self, hh_id) -> HouseHold:
         """
         Function to retrieve a specific household from the population.
 
@@ -127,7 +127,7 @@ class Population:
         """
         return self.__households[hh_id]
 
-    def size(self):
+    def size(self) -> int:
         """
         Function to retrieve the size of the population, i.e.,
         the number of individuals.

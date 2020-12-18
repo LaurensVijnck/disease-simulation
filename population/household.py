@@ -1,22 +1,23 @@
 from collections import defaultdict
 from population.individual import Individual
+from disease.disease_state import DiseaseStateEnum
 
 
 class HouseHold:
     """
     Class that represents a household.
     """
-    def __init__(self, hh_id):
+    def __init__(self, hh_id: int):
         self.__is_nursing_home = None # TODO Extract from event log
         self.__hh_id = hh_id
         self.__num_children = 0
-        self.__num_infected = 0
-        self.__num_infected_per_ag = defaultdict(int)
-        self.__num_infected_per_ag_per_sex = defaultdict(int)
-        self.__age_distribution_inf = defaultdict(int)
+
+        self._num_per_disease_state = defaultdict(int)
+        self._num_per_disease_state_per_age_group = defaultdict(lambda: defaultdict(int))
+        self._num_per_disease_state_per_age_group_per_sex = defaultdict(lambda: defaultdict(int))
         self.__members = []
 
-    def get_id(self):
+    def get_id(self) -> int:
         """
         Function to retrieve the identifier of the household.
 
@@ -49,7 +50,7 @@ class HouseHold:
        """
         self.__members.remove(individual)
 
-    def has_children(self):
+    def has_children(self) -> bool:
         """
         Function to check whether there are children in the household.
 
@@ -57,7 +58,7 @@ class HouseHold:
         """
         return self.__num_children > 0
 
-    def get_size(self):
+    def get_size(self) -> int:
         """
         Function to retrieve the size of the household.
 
@@ -65,72 +66,62 @@ class HouseHold:
         """
         return len(self.__members)
 
-    def get_num_infected(self):
+    def get_total_for_disease_state(self, disease_state: DiseaseStateEnum) -> int:
         """
-       Function to retrieve the number of infected people in the household.
+        Function to retrieve the number of people in given state in the household.
 
-       :return: (number) number of infected people
-       """
-        return self.__num_infected
-
-    def get_num_infected_ag_sex(self, hh_age_group, sex):
-        """
-        Function to retrieve the number of infected people
-        per age group and per sex, in the household.
-
-        :param hh_age_group: (number) household age group
-        :param sex: (sex) sex of individuals
         :return: (number) number of infected people
         """
-        return self.__num_infected_per_ag_per_sex[(hh_age_group, sex)]
+        return self._num_per_disease_state[disease_state]
 
-    def infected_by_sex_gen(self):
+    def get_num_for_disease_state(self, disease_state: DiseaseStateEnum, age_group: int) -> int:
         """
-        Function to retrieve the number of infected people, per household
+        Function to retrieve the number of people in given state, for the given age group, in the household.
+
+        :return: (number) number of infected people
+        """
+        return self._num_per_disease_state_per_age_group[disease_state][age_group]
+
+    def get_num_for_disease_state_by_ag_by_sex(self, disease_state: DiseaseStateEnum, hh_age_group: int, sex: bool):
+        """
+        Function to retrieve the number of people in given state, for the given age group and sex, in the household.
+
+        :return: (number) number of infected people
+        """
+        return self._num_per_disease_state_per_age_group_per_sex[disease_state][(hh_age_group, sex)]
+
+    def get_num_for_disease_state_gen(self, disease_state: DiseaseStateEnum):
+        """
+        Function to retrieve the number of people in the givne state, per household
         age group and per sex, in the household.
 
         :return: (generator) through infected by sex
         """
-        for (age_group, sex) in self.__num_infected_per_ag_per_sex:
-            yield age_group, sex, self.__num_infected_per_ag_per_sex[(age_group, sex)]
+        for (age_group, sex) in self._num_per_disease_state_per_age_group_per_sex[disease_state]:
+            yield age_group, sex, self._num_per_disease_state_per_age_group_per_sex[(age_group, sex)]
 
-    def get_num_infected_ag(self, hh_age_group):
-        """
-        Function to retrieve the number of infected people, per household
-        age group in the household.
-
-        :param hh_age_group: (number) household age group
-        :return: (number) number of infected people
-        """
-        return self.__num_infected_per_ag[hh_age_group]
-
-    def get_infected_age_distribution(self):
-        """
-        Function to retrieve an age distribution of infected
-        individuals in the household.
-
-        :return: (defaultdict) age distribution
-        """
-        return self.__age_distribution_inf
+    # def get_infected_age_distribution(self):
+    #     """
+    #     Function to retrieve an age distribution of infected
+    #     individuals in the household.
+    #
+    #     :return: (defaultdict) age distribution
+    #     """
+    #     return self.__age_distribution_inf
 
     def compute_metrics(self, curr_date, max_child_age):
         """
         Function to compute the metrics of the household for the given date.
         """
-        # TODO Metrics should group according to the disease state.
-        self.__num_children = 0
-        self.__num_infected = 0
-        self.__num_infected_per_ag = defaultdict(int)
-        self.__num_infected_per_ag_per_sex = defaultdict(int)
-        self.__age_distribution_inf = defaultdict(int)
+        self._num_per_disease_state = defaultdict(int)
+        self._num_per_disease_state_per_age_group = defaultdict(lambda: defaultdict(int))
+        self._num_per_disease_state_per_age_group_per_sex = defaultdict(lambda: defaultdict(int))
 
         for ind in self.__members:
 
-            # if ind.is_infected():
-            #     self.__num_infected += 1
-            #     self.__num_infected_per_ag[ind.get_household_age_group()] += 1
-            #     self.__num_infected_per_ag_per_sex[(ind.get_household_age_group(), ind.get_sex())] += 1
-            #     self.__age_distribution_inf[ind.get_age(curr_date)] += 1
+            self._num_per_disease_state[ind.get_disease_sate()] += 1
+            self._num_per_disease_state_per_age_group[ind.get_disease_sate][ind.get_household_age_group()] += 1
+            self._num_per_disease_state_per_age_group_per_sex[ind.get_disease_sate][(ind.get_household_age_group, ind.get_sex())] += 1
 
             if ind.is_child(curr_date, max_child_age):
                 self.__num_children += 1

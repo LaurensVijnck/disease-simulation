@@ -7,7 +7,7 @@ class Individual:
     """
     Class that represents an individual in the population.
     """
-    def __init__(self, ID: int, birth_date: datetime, sex: int, disease_state: DiseaseStateEnum, population_age_group: int, household_age_group: int, HH_position: str):
+    def __init__(self, ID: int, birth_date: datetime, sex: bool, disease_state: DiseaseStateEnum, population_age_group: int, household_age_group: int, HH_position: str):
         self.__ID = ID
         self.__birth_date = birth_date
         self.__disease_state = disease_state
@@ -29,7 +29,7 @@ class Individual:
     def get_birth_date(self) -> datetime:
         return self.__birth_date
 
-    def get_sex(self) -> int:
+    def get_sex(self) -> bool:
         return self.__sex
 
     def get_population_age_group(self) -> int:
@@ -72,5 +72,5 @@ class Individual:
         :return: (individual) as specified in the events
         """
         id = int(event["ID"])
-        sex = 1 if event["sex"] != "M" else 2
+        sex = True if event["sex"] != "M" else False
         return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"])

@@ -50,7 +50,7 @@ class DiseaseLogger:
             "HH_ID",
             "sex",
             "age",
-            "inf_age_distribution",
+            # "inf_age_distribution",
             "num_infected_hh",
             "hh_size"
         ]
@@ -86,8 +86,8 @@ class DiseaseLogger:
                 "HH_ID": household.get_id(),
                 "sex": individual.get_sex(),
                 "age": individual.get_age(date),
-                "inf_age_distribution": serialize_age_distribution(household.get_infected_age_distribution()),
-                "num_infected_hh": household.get_num_infected(),
+                # "inf_age_distribution": serialize_age_distribution(household.get_infected_age_distribution()),
+                "num_infected_hh": household.get_total_for_disease_state(DiseaseStateEnum.STATE_INFECTED),
                 "hh_size": household.get_size()
 
             })

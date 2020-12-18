@@ -12,8 +12,6 @@ Beta value based on the age
 
     - Concrete example of matrix to be able to implement (Signe)
 """
-
-
 def _pad_centered(target_str, dest_len):
     len_diff = max(0, dest_len - len(target_str))
     return " " * math.ceil(len_diff/2) + target_str + " " * math.floor(len_diff/2)
@@ -66,7 +64,7 @@ class Transmission:
         contacts = 0
         contact_matrix = self.__hh_contact_children if household.has_children() else self.__hh_contact
 
-        for (age_group, sex, num) in household.infected_by_sex_gen():
+        for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
             contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
 
         return (1 - self.__beta_household) ** contacts
