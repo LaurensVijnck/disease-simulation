@@ -14,7 +14,7 @@ class DiseaseStateFSMNode(ABC):
     def __init__(self, state: DiseaseStateEnum):
         self.__disease_State = state
 
-    def get_disease_state(self):
+    def get_disease_state(self) -> DiseaseStateEnum:
         """
         Function to determine the disease state that is represented by
         the current node in the FSM.
@@ -31,7 +31,7 @@ class DiseaseStateFSMNode(ABC):
         """
         ...
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         """
         Function dictates whether the current node is a terminal
         node of the FSM.
@@ -43,7 +43,7 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the exposed disease state.
     """
-    def get_next_state(self, individual: Individual, current_date: datetime):
+    def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Compute duration of the incubation period
         incubation_duration = max(2, np.random.lognormal(mean=1.43, sigma=0.66, size=None)) # Can we seed numpy randoms?
@@ -58,7 +58,7 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         return DiseaseStateEnum.STATE_INFECTED, exposed_period
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return False
 
 
@@ -66,7 +66,7 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the infected (pre-symptomatic) disease state.
     """
-    def get_next_state(self, individual: Individual, current_date: datetime):
+    def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # By means of an example; we can perform any kind of computation to decide upon this.
         becomes_symptomatic = random.choice([True, False])
@@ -76,7 +76,7 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         return DiseaseStateEnum.STATE_ASYMPTOMATIC, individual.pre_symptomatic_duration
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return False
 
 
@@ -84,14 +84,14 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the asymptomatic disease state.
     """
-    def get_next_state(self, individual: Individual, current_date: datetime):
+    def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Determine number of days, be careful with negative state durations.
         asymptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
         return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return False
 
 
@@ -99,7 +99,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the symptomatic disease state.
     """
-    def get_next_state(self, individual: Individual, current_date: datetime):
+    def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Determine number of days, be careful with negative state durations.
         symptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
@@ -120,7 +120,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         return DiseaseStateEnum.STATE_RECOVERED, symptomatic_duration
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return False
 
 
@@ -128,12 +128,12 @@ class HospitalizedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the hospitalized disease state.
     """
-    def get_next_state(self, individual: Individual, current_date: datetime):
+    def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Duration to remain hospitalized is established in the previous node
         return DiseaseStateEnum.STATE_DIED, individual.hospitalized_duration
 
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return False
 
 
@@ -149,10 +149,7 @@ class DiedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the died disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
-    def is_end_state(self):
+    def is_end_state(self) -> bool:
         return True
 
 
@@ -178,13 +175,13 @@ class DiseaseFSM:
         self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED)
         self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 
-    def get_start_node(self):
+    def get_start_node(self) -> DiseaseStateFSMNode:
         """
         Function to extract the start node form the state machine.
         """
         return self._nodes[DiseaseStateEnum.STATE_EXPOSED]
 
-    def get_node_for_type(self, state: DiseaseStateEnum):
+    def get_node_for_type(self, state: DiseaseStateEnum) -> DiseaseStateFSMNode:
         """
         Function to retrieve the specified node from the state machine.
         """
