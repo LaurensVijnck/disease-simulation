@@ -162,11 +162,11 @@ class DiseaseFSM:
     """
     def __init__(self):
         self._nodes = {}
-        self.__create_nodes()
+        self._create_nodes()
 
-    def __create_nodes(self):
+    def _create_nodes(self):
         """
-        Fuction to register the disease states in the state machine.
+        Function to register the disease states in the state machine.
         """
 
         # FUTURE: The following nodes can be generated according to a configuration.
@@ -179,7 +179,13 @@ class DiseaseFSM:
         self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 
     def get_start_node(self):
+        """
+        Function to extract the start node form the state machine.
+        """
         return self._nodes[DiseaseStateEnum.STATE_EXPOSED]
 
     def get_node_for_type(self, state: DiseaseStateEnum):
+        """
+        Function to retrieve the specified node from the state machine.
+        """
         return self._nodes[state]
