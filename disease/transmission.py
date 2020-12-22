@@ -24,7 +24,7 @@ class Transmission:
         self.__num_hh_ag = global_config.get("num_age_groups_hh")
 
         # FUTURE: Remove following parameters, as these are now specified for each disease state;
-        #self.__beta_pop = config.get("beta_population")
+        # self.__beta_pop = config.get("beta_population")
         # self.__beta_household = config.get("beta_household")
 
         # TODO: Allow supplying the following probabilities via config
@@ -83,7 +83,7 @@ class Transmission:
         symp_contacts = 0
         contact_matrix = self.__hh_contact_children if household.has_children() else self.__hh_contact
 
-        # FUTURE: This may need some improvement code-wise.
+        # TODO This may need some improvement code-wise.
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
             inf_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
 
@@ -104,6 +104,7 @@ class Transmission:
         """
         escape_prob = 1
 
+        # TODO This may need some improvement code-wise.
         for (age_group, num) in summary.num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
             beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1] * self.__beta_pop[DiseaseStateEnum.STATE_INFECTED]
             escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num
