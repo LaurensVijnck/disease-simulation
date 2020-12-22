@@ -13,6 +13,7 @@ def _pad_centered(target_str, dest_len):
     len_diff = max(0, dest_len - len(target_str))
     return " " * math.ceil(len_diff/2) + target_str + " " * math.floor(len_diff/2)
 
+
 class Transmission:
     """
     Class that represents the transmission model.
