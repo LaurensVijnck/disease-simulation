@@ -38,7 +38,7 @@ class Reporter:
         self._enabled = config.get("enabled", True)
         self._reporting_period_in_days = config.get("report_period_in_days")
         self._log_level = config.get("log_level", [])
-        self._line_length = config.get("line_length", 80)
+        self._line_length = config.get("line_length", 100)
 
         # Disease
         self.__date_format = global_config.get("date_format", "%Y-%m-%d")

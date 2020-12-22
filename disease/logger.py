@@ -109,7 +109,7 @@ class DiseaseLogger:
             for disease_state in DiseaseStateEnum:
                 el[f"num_{disease_state.name.lower()}"] = summary.get_total_for_disease_state(disease_state)
 
-            print(el)
+            print(el) # TODO Remove
             self.__sim_log.writerow(el)
 
 

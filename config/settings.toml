@@ -20,9 +20,9 @@ terminate_on_zero_infected = true                                   # terminate 
     [simulation.reporter]
     enabled = true                                                  # whether to report while running
     report_period_in_days = 2                                       # report every x days
-    line_length = 80                                                # line length for formatting
+    line_length = 100                                               # line length for formatting
 
-    sink = "console"                                                   # sink for writing reporter data
+    sink = "console"                                                # sink for writing reporter data
     log_level = ["error", "info"]                                   # types of logs to show, i.e., debug, info, error
 
         [simulation.reporter.sinks]                                 # sink specific settigs

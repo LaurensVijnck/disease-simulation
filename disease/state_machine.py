@@ -43,9 +43,6 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the exposed disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
     def get_next_state(self, individual: Individual, current_date: datetime):
 
         # Compute duration of the incubation period
@@ -69,9 +66,6 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the infected (pre-symptomatic) disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
     def get_next_state(self, individual: Individual, current_date: datetime):
 
         # By means of an example; we can perform any kind of computation to decide upon this.
@@ -90,13 +84,10 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the asymptomatic disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
     def get_next_state(self, individual: Individual, current_date: datetime):
 
         # Determine number of days, be careful with negative state durations.
-        asymptomatic_duration = max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration)
+        asymptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
         return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
 
@@ -108,22 +99,39 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the symptomatic disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
     def get_next_state(self, individual: Individual, current_date: datetime):
 
-        # By means of an example; we can perform any kind of computation to decide upon this.
-        dies = random.choice([True, False])
+        # Determine number of days, be careful with negative state durations.
+        symptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
-        if dies:
-            days_until_demise = np.random.uniform(low=0, high=2, size=None)
+        # By means of an example; we can perform any kind of computation to decide upon this.
+        individual_dies = random.choice([True, False])
+
+        if individual_dies:
+            days_until_demise = np.random.uniform(low=0, high=50, size=None)
+
+            if days_until_demise > symptomatic_duration:
+
+                # FUTURE: Move hospitalized duration elsewhere.
+                individual.hospitalized_duration = days_until_demise - symptomatic_duration
+                return DiseaseStateEnum.STATE_HOSPITALIZED, symptomatic_duration
+
             return DiseaseStateEnum.STATE_DIED, days_until_demise
 
-        # Determine number of days, be careful with negative state durations.
-        symptomatic_duration = max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration)
-
         return DiseaseStateEnum.STATE_RECOVERED, symptomatic_duration
+
+    def is_end_state(self):
+        return False
+
+
+class HospitalizedDiseaseStateFSMNode(DiseaseStateFSMNode):
+    """
+    FSM Node to representing the hospitalized disease state.
+    """
+    def get_next_state(self, individual: Individual, current_date: datetime):
+
+        # Duration to remain hospitalized is established in the previous node
+        return DiseaseStateEnum.STATE_DIED, individual.hospitalized_duration
 
     def is_end_state(self):
         return False
@@ -133,9 +141,6 @@ class RecoveredDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the recovered disease state.
     """
-    def __init__(self, state: DiseaseStateEnum):
-        super().__init__(state)
-
     def is_end_state(self):
         return True
 
@@ -160,12 +165,16 @@ class DiseaseFSM:
         self.__create_nodes()
 
     def __create_nodes(self):
+        """
+        Fuction to register the disease states in the state machine.
+        """
 
         # FUTURE: The following nodes can be generated according to a configuration.
         self._nodes[DiseaseStateEnum.STATE_EXPOSED] = ExposedDiseaseStateFSMNode(DiseaseStateEnum.STATE_EXPOSED)
         self._nodes[DiseaseStateEnum.STATE_INFECTED] = InfectedDiseaseStateFSMNode(DiseaseStateEnum.STATE_INFECTED)
         self._nodes[DiseaseStateEnum.STATE_ASYMPTOMATIC] = AsymptomaticDiseaseStateFSMNode(DiseaseStateEnum.STATE_ASYMPTOMATIC)
         self._nodes[DiseaseStateEnum.STATE_SYMPTOMATIC] = SymptomaticDiseaseStateFSMNode(DiseaseStateEnum.STATE_SYMPTOMATIC)
+        self._nodes[DiseaseStateEnum.STATE_HOSPITALIZED] = HospitalizedDiseaseStateFSMNode(DiseaseStateEnum.STATE_HOSPITALIZED)
         self._nodes[DiseaseStateEnum.STATE_RECOVERED] = RecoveredDiseaseStateFSMNode(DiseaseStateEnum.STATE_RECOVERED)
         self._nodes[DiseaseStateEnum.STATE_DIED] = DiedDiseaseStateFSMNode(DiseaseStateEnum.STATE_DIED)
 

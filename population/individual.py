@@ -19,6 +19,7 @@ class Individual:
 
         # Parameters specific to the disease model, ideally they should be moved elsewhere.
         self.pre_symptomatic_duration = None
+        self.hospitalized_duration = None
 
     def get_disease_sate(self) -> DiseaseStateEnum:
         return self.__disease_state
