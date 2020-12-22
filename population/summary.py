@@ -18,11 +18,11 @@ class PopulationSummary:
         self._total_per_age_group = defaultdict(int)
         self._prepare()
 
-    def num_infected_for_disease_state_gen(self, disease_state: DiseaseStateEnum):
+    def num_for_disease_state_gen(self, disease_state: DiseaseStateEnum):
         for age_group in self._num_per_disease_state_per_age_group[disease_state]:
             yield (age_group, self._num_per_disease_state_per_age_group[disease_state][age_group])
 
-    def get_num_for_disease_state(self, disease_state: DiseaseStateEnum, age_group: int) -> int:
+    def get_num_for_disease_state_per_ag(self, disease_state: DiseaseStateEnum, age_group: int) -> int:
         return self._num_per_disease_state_per_age_group[disease_state][age_group]
 
     def get_total_for_disease_state(self, disease_state: DiseaseStateEnum) -> int:

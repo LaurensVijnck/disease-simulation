@@ -59,7 +59,7 @@ class Disease:
 
                 if individual.get_disease_sate() == DiseaseStateEnum.STATE_SUSCEPTIBLE:
 
-                    transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary)
+                    transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary, curr_date)
                     if transmission_occurs:
                         self.transmit(individual, curr_date, False, hh_trans, pop_trans)
 

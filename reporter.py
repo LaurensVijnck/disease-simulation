@@ -109,7 +109,7 @@ class Reporter:
             msg += _pad(str(ag), 12) + " "
 
             for disease_state in DiseaseStateEnum:
-                msg += _pad(str(self._population_summary.get_num_for_disease_state(disease_state, ag)), 12) + " "
+                msg += _pad(str(self._population_summary.get_num_for_disease_state_per_ag(disease_state, ag)), 12) + " "
 
             msg += "\n"
 
