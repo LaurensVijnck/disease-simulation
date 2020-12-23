@@ -161,6 +161,8 @@ class DiseaseFSM:
         self._nodes = {}
         self._create_nodes()
 
+        # TODO Seed the generator numpy.random.seed
+
     def _create_nodes(self):
         """
         Function to register the disease states in the state machine.
