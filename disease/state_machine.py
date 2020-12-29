@@ -148,6 +148,8 @@ class RecoveredDiseaseStateFSMNode(DiseaseStateFSMNode):
 class DiedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the died disease state.
+
+    TODO: Currently people that died are still part of the population. Do we need to exclude these?
     """
     def is_end_state(self) -> bool:
         return True
@@ -162,6 +164,7 @@ class DiseaseFSM:
         self._create_nodes()
 
         # TODO Seed the generator numpy.random.seed
+        # TODO Disease deque should be managed at _this_ level
 
     def _create_nodes(self):
         """

@@ -9,20 +9,12 @@ from disease.transmission import Transmission
 from disease.state_machine import DiseaseStateEnum, DiseaseFSM
 from disease.rolling_deque import RollingDeque
 
-"""
-Disease related mortality:
-
-1. Is fixed infection duration sufficient? 
-        - otherwise draw from distribution, in this case maintain priority queue for recovery
-2. Model for determining disease related deaths, i.e., concrete formula to derrive probability based on attributes of 'individual/household' (Signe)
-        - Write dead log record for death
-        - Add to summary
-        - Q: How to process deaths? deleted vs. add new disease state, i.e., 'death'
-        - Check program crashes when events for death individual are encounter
-"""
-
 
 class Disease:
+    """
+    Class to implement the disease model by propagating the disease
+    according to the rules specified in the tranmission model.
+    """
     def __init__(self, config, global_config, population: Population, reporter: Reporter):
         self.__population = population
         self.__reporter = reporter
@@ -40,6 +32,7 @@ class Disease:
         self.__disease_fsm = DiseaseFSM()
 
         # Recovery queue
+        # FUTURE: The disease deque and corresponding functions should be managed by the state machine.
         self.__disease_deque = RollingDeque()
 
     # FUTURE: Parallelize this loop.
@@ -81,6 +74,8 @@ class Disease:
     def __add_to_disease_deque(self, individual: Individual, date: datetime, disease_state: DiseaseStateEnum):
         """
         Function to add to the disease queue.
+
+        FUTURE: The disease deque and corresponding functions should be managed by the state machine.
         """
 
         # Log entry
@@ -103,6 +98,8 @@ class Disease:
     def __process_disease_deque(self, curr_date: datetime):
         """
         Function to process the disease deque for the current date.
+
+        FUTURE: The disease deque and corresponding functions should be managed by the state machine.
         """
         # Process disease deque up to current date
         for next_state, individual in self.__disease_deque.get_elements_for_date(curr_date):
