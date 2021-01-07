@@ -133,3 +133,6 @@ class DiseaseLogger:
 
         if self.__enabled and self.__sim_log_file_name:
             self.__sim_output_file.close()
+
+        if self.__enabled and self.__sim_log_file_name:
+            self.__disease_log_out_file.close()
