@@ -44,8 +44,8 @@ terminate_on_zero_infected = true                                   # terminate 
         hh_matrix = "./input/hh_contact_no_children.csv"            # location household contact matrix
         hh_matrix_children = "./input/hh_contact_children.csv"      # location household with children contact matrix
 
-        beta_household = 0.05                                       # beta household
-        beta_population = 0.95                                      # beta population
+        # beta_household = 0.05                                       # beta household (Deprecated)
+        # beta_population = 0.95                                      # beta population (Deprecated)
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.population]
         age_child_limit = 13                                        # maximum age till individual is considered to be a child (exclusive!)

@@ -70,7 +70,7 @@ class DiseaseLogger:
         if self.__enabled:
             self.__inf_output_file, self.__inf_log = self._initialize_file_sink(self.__tans_log_file_name, inf_cols)
             self.__sim_output_file, self.__sim_log = self._initialize_file_sink(self.__sim_log_file_name, sim_cols)
-            self.__disease_log_out_file, self.__disease_log = self._initialize_file_sink(self.__tans_log_file_name, disease_cols)
+            self.__disease_log_out_file, self.__disease_log = self._initialize_file_sink(self.__disease_log_file_name, disease_cols)
 
     def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
         if self.__enabled:

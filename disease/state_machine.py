@@ -49,7 +49,8 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
         incubation_duration = max(2, np.random.lognormal(mean=1.43, sigma=0.66, size=None)) # Can we seed numpy randoms?
 
         # Compute duration of the pre-symptomatic period
-        pre_symptomatic_duration = min(incubation_duration, np.random.gamma(shape=20.52, scale=1.59, size=None))
+        pre_symptomatic_duration = min(incubation_duration, np.random.choice(np.arange(1, 7), p=[0.45, 0.31, 0.16, 0.06, 0.015, 0.005]))
+        # pre_symptomatic_duration = min(incubation_duration, np.random.gamma(shape=20.52, scale=1.59, size=None))
 
         # Commute exposed duration
         exposed_period = math.floor(incubation_duration - pre_symptomatic_duration)
