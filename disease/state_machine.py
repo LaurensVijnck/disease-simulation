@@ -70,6 +70,10 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # By means of an example; we can perform any kind of computation to decide upon this.
+        # SM 13/1/2021: The probability to be symptomatic follows this age distribution:
+        # age-groups=[0-19, 20-29, 30-39, 40-49, 50-59, 60+]
+        # probability= [0.07, 0.17, 0.42, 0.54, 0.83, 0.94]
+        
         becomes_symptomatic = random.choice([True, False])
 
         if becomes_symptomatic:
