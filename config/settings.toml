@@ -52,7 +52,7 @@ terminate_on_zero_infected = true                                   # terminate 
 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
-    base_population = "./input/pop_sample_27112020.csv"             # Base population is used to compute base age distribution (used to compute adjustment in disease model)
-    initial_population = "./input/pop_sample_27112020.csv"          # location initial population csv
-    event_log = "./input/event_log_sample.csv"                      # location demographic events log
+    base_population = "./input/pop_sample_NH.csv"             # Base population is used to compute base age distribution (used to compute adjustment in disease model)
+    initial_population = "./input/pop_sample_NH.csv"          # location initial population csv
+    event_log = "./input/event_log_sample_NH.csv"                      # location demographic events log
 # ----------------------------------------------------------------------------------------------------------------------

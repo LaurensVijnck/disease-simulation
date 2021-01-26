@@ -115,7 +115,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         individual_dies = random.choice([True, False])
 
         if individual_dies:
-            days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099 size=None)
+            days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)
 
             if days_until_demise > symptomatic_duration:
 
