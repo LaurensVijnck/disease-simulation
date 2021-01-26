@@ -98,7 +98,8 @@ class HouseHold:
         :return: (generator) through infected by sex
         """
         for (age_group, sex) in self._num_per_disease_state_per_age_group_per_sex[disease_state]:
-            yield age_group, sex, self._num_per_disease_state_per_age_group_per_sex[(age_group, sex)]
+            yield (age_group, sex, self._num_per_disease_state_per_age_group_per_sex[disease_state][(age_group, sex)])
+
 
     # def get_infected_age_distribution(self):
     #     """
@@ -117,11 +118,11 @@ class HouseHold:
         self._num_per_disease_state_per_age_group = defaultdict(lambda: defaultdict(int))
         self._num_per_disease_state_per_age_group_per_sex = defaultdict(lambda: defaultdict(int))
 
-        for ind in self.__members:
+        for individual in self.__members:
 
-            self._num_per_disease_state[ind.get_disease_sate()] += 1
-            self._num_per_disease_state_per_age_group[ind.get_disease_sate][ind.get_household_age_group()] += 1
-            self._num_per_disease_state_per_age_group_per_sex[ind.get_disease_sate][(ind.get_household_age_group, ind.get_sex())] += 1
+            self._num_per_disease_state[individual.get_disease_sate()] += 1
+            self._num_per_disease_state_per_age_group[individual.get_disease_sate()][individual.get_household_age_group()] += 1
+            self._num_per_disease_state_per_age_group_per_sex[individual.get_disease_sate()][(individual.get_household_age_group(), individual.get_sex())] += 1
 
-            if ind.is_child(curr_date, max_child_age):
+            if individual.is_child(curr_date, max_child_age):
                 self.__num_children += 1

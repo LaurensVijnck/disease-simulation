@@ -29,16 +29,16 @@ class Transmission:
 
         # TODO: Allow supplying the following probabilities via config
         self.__beta_pop = {
-            DiseaseStateEnum.STATE_INFECTED: 5,
-            DiseaseStateEnum.STATE_SYMPTOMATIC: 10,
-            DiseaseStateEnum.STATE_ASYMPTOMATIC: 20,
+            DiseaseStateEnum.STATE_INFECTED: 1,
+            DiseaseStateEnum.STATE_SYMPTOMATIC: 1,
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: 1,
         }
 
         # TODO: Allow supplying the following probabilities via config
         self.__beta_household = {
-            DiseaseStateEnum.STATE_INFECTED: 10,
-            DiseaseStateEnum.STATE_SYMPTOMATIC: 20,
-            DiseaseStateEnum.STATE_ASYMPTOMATIC: 30,
+            DiseaseStateEnum.STATE_INFECTED: 0.2,
+            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.2,
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.2,
         }
 
         self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None))

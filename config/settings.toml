@@ -10,7 +10,7 @@
 start_date = "2010-1-1"                                             # start date simulation
 end_date = "2010-6-30"                                              # end date simulation
 
-initial_influx = 3                                                  # initial influx
+initial_influx = 10                                                  # initial influx
 influx_period_in_days = 2                                           # influx every x days
 num_influx_per_period = 0                                           # daily influx
 

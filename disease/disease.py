@@ -48,6 +48,7 @@ class Disease:
 
         for household in self.__population.household_gen():
             household.compute_metrics(curr_date, self.__population.get_age_child_limit())
+
             for individual in household.member_gen():
 
                 if individual.get_disease_sate() == DiseaseStateEnum.STATE_SUSCEPTIBLE:
