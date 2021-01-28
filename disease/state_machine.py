@@ -73,8 +73,22 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
         # SM 13/1/2021: The probability to be symptomatic follows this age distribution:
         # age-groups=[0-19, 20-29, 30-39, 40-49, 50-59, 60+]
         # probability= [0.07, 0.17, 0.42, 0.54, 0.83, 0.94]
+        # SM 26/1/2021: For now I have just used an 'If' function but I guess you'll have a more efficient approach/
 
-        becomes_symptomatic = random.choice([True, False])
+        #becomes_symptomatic = random.choice([True, False])
+
+        if individual.get_age(current_date) < 20:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.07, (1-0.07)])
+        elif 20 <= individual.get_age(current_date) <= 29:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.17, (1-0.17)])
+        elif 30 <= individual.get_age(current_date) <= 39:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.42, (1-0.42)])
+        elif 40 <= individual.get_age(current_date) <= 49:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.54, (1-0.54)])
+        elif 50 <= individual.get_age(current_date) <= 59:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.83, (1-0.83)])
+        else:
+            becomes_symptomatic = np.random.choice([True, False], p=[0.94, (1-0.94)])
 
         if becomes_symptomatic:
             return DiseaseStateEnum.STATE_SYMPTOMATIC, individual.pre_symptomatic_duration
@@ -112,7 +126,45 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         # By means of an example; we can perform any kind of computation to decide upon this.
         # SM 13/1/2021: Age-sex-household-specific distribution sent to LV
         
-        individual_dies = random.choice([True, False])
+        #individual_dies = random.choice([True, False])
+
+        if individual.get_age(current_date) < 25 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0, 1])
+        if individual.get_age(current_date) < 25 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.000011, (1-0.000011)])
+        if 25 <= individual.get_age(current_date) <= 44 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.00021, (1-0.00021)])
+        if 25 <= individual.get_age(current_date) <= 44 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.00014, (1-0.00014)])
+        if 45 <= individual.get_age(current_date) <= 64 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0029, (1-0.0029)])
+        if 45 <= individual.get_age(current_date) <= 64 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.0014, (1-0.0014)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.017, (1-0.017)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0074, (1-0.0074)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.653, (1-0.653)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.563, (1-0.563)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0367, (1-0.0367)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0173, (1-0.0173)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.467, (1-0.467)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.228, (1-0.228)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0434, (1-0.0434)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_NH() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0145, (1-0.0145)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.5995, (1-0.5995)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_NH():
+            individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
+        #print([individual.get_NH(),individual_dies])
 
         if individual_dies:
             days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)

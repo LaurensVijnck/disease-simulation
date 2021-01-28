@@ -34,8 +34,8 @@ class EventHandler:
 # Handler to add an individual to the population
 class AddToPopEventHandler(EventHandler):
     def process(self):
-        pop_ins = "INSERT INTO population (id, birth_date, sex population_age_group, household_age_group, HH_ID, hh_position) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        val = (self.event["ID"], self.event["birth_date"], self.event["sex"], self.event["age_group_pop"], min(int(self.event["age_group_hh"]), 4), self.event["HH_ID"], self.event["hh_position"])
+        pop_ins = "INSERT INTO population (id, birth_date, sex population_age_group, household_age_group, HH_ID, hh_position, NH) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (self.event["ID"], self.event["birth_date"], self.event["sex"], self.event["age_group_pop"], min(int(self.event["age_group_hh"]), 4), self.event["HH_ID"], self.event["hh_position"], self.event["NH"])
         self.pop_cursor.execute(pop_ins, val)
 
 
@@ -72,4 +72,11 @@ class DiseaseStateChangedHandler(EventHandler):
     def process(self):
         pop_upd = "UPDATE population SET disease_state = %s WHERE ID = %s"
         val = (self.event["disease_state"], self.event["ID"])
+        self.pop_cursor.execute(pop_upd, val)
+
+# Handler to change nursing home dummy
+class NursingHomeChangedHandler(EventHandler):
+    def process(self):
+        pop_upd = "UPDATE population SET NH = %s WHERE ID = %s"
+        val = (self.event["NH"], self.event["ID"])
         self.pop_cursor.execute(pop_upd, val)

@@ -52,7 +52,8 @@ class DiseaseLogger:
             "age",
             # "inf_age_distribution",
             "num_infected_hh",
-            "hh_size"
+            "hh_size",
+            "NH"
         ]
 
         sim_cols = ["iteration"]
@@ -88,7 +89,8 @@ class DiseaseLogger:
                 "age": individual.get_age(date),
                 # "inf_age_distribution": serialize_age_distribution(household.get_infected_age_distribution()),
                 "num_infected_hh": household.get_total_for_disease_state(DiseaseStateEnum.STATE_INFECTED),
-                "hh_size": household.get_size()
+                "hh_size": household.get_size(),
+                "NH": individual.get_NH()
 
             })
 

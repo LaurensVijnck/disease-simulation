@@ -88,7 +88,7 @@ class ExternalPopulation:
         """
         dbcusor = self.__con.cursor()
         dbcusor.execute("DROP TABLE IF EXISTS population")
-        dbcusor.execute("CREATE TABLE population (ID INT PRIMARY KEY, birth_date DATE NOT NULL, sex INT NOT NULL, disease_state VARCHAR(3) NOT NULL DEFAULT 'SUS', population_age_group INT NOT NULL, household_age_group INT NOT NULL, HH_ID INT NOT NULL, HH_position VARCHAR(16) NOT NULL)")
+        dbcusor.execute("CREATE TABLE population (ID INT PRIMARY KEY, birth_date DATE NOT NULL, sex INT NOT NULL, disease_state VARCHAR(3) NOT NULL DEFAULT 'SUS', population_age_group INT NOT NULL, household_age_group INT NOT NULL, HH_ID INT NOT NULL, HH_position VARCHAR(16) NOT NULL, NH INT NOT NULL)")
         dbcusor.execute("CREATE INDEX household_index ON population(HH_ID)")
 
     def __load_data(self, population_csv):
@@ -97,7 +97,7 @@ class ExternalPopulation:
 
         :param population_csv: (str) Population csv path.
         """
-        pop_ins = "INSERT INTO population (id, birth_date, sex, population_age_group, household_age_group, HH_ID, HH_position) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        pop_ins = "INSERT INTO population (id, birth_date, sex, population_age_group, household_age_group, HH_ID, HH_position, NH) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         values = []
 
         with open(population_csv, mode='r') as pop_csv:
@@ -107,7 +107,7 @@ class ExternalPopulation:
                     continue
 
                 # TODO: Insert correct population and household age_groups
-                values.append([row["ID"], row["birth_date"], row["sex"], 1, 1, row["HH_ID"], row["hh_position"]])
+                values.append([row["ID"], row["birth_date"], row["sex"], 1, 1, row["HH_ID"], row["hh_position"], row["NH"]])
             self.__reporter.log(f'Added {csv_reader.line_num - 1} individuals to initial population.')
 
         self.__con.cursor().executemany(pop_ins, values)
