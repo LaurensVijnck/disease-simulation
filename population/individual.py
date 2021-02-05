@@ -7,7 +7,7 @@ class Individual:
     """
     Class that represents an individual in the population.
     """
-    def __init__(self, ID: int, birth_date: datetime, sex: bool, disease_state: DiseaseStateEnum, population_age_group: int, household_age_group: int, HH_position: str, NH: bool):
+    def __init__(self, ID: int, birth_date: datetime, sex: bool, disease_state: DiseaseStateEnum, population_age_group: int, household_age_group: int, HH_position: str, nursing_home: bool):
         self.__ID = ID
         self.__birth_date = birth_date
         self.__disease_state = disease_state
@@ -16,7 +16,7 @@ class Individual:
         self.__household_age_group = household_age_group
         self.__household = None
         self.__HH_position = HH_position
-        self.__NH = NH
+        self.__nursing_home = nursing_home
         # Parameters specific to the disease model, ideally they should be moved elsewhere.
         self.pre_symptomatic_duration = None
         self.hospitalized_duration = None
@@ -36,8 +36,11 @@ class Individual:
     def get_sex(self) -> bool:
         return self.__sex
 
-    def get_NH(self) -> bool:
-        return self.__NH
+    def get_nursing_home(self) -> bool:
+        return self.__nursing_home
+
+    def set_nursing_home(self, nursing_home: bool):
+        self.__nursing_home = nursing_home
 
     def get_population_age_group(self) -> int:
         return self.__population_age_group
@@ -80,5 +83,5 @@ class Individual:
         """
         id = int(event["ID"])
         sex = True if event["sex"] != "M" else False
-        NH = True if event["NH"] == 1 else False
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"], NH)
+        nursing_home = True if event["NH"] == 1 else False
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"], nursing_home)

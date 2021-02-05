@@ -140,31 +140,31 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
             individual_dies = np.random.choice([True, False], p=[0.0029, (1-0.0029)])
         if 45 <= individual.get_age(current_date) <= 64 and individual.get_sex():
             individual_dies = np.random.choice([True, False], p=[0.0014, (1-0.0014)])
-        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_NH() is False:
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.017, (1-0.017)])
-        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_NH() is False:
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.0074, (1-0.0074)])
-        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_NH():
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.653, (1-0.653)])
-        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_NH():
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.563, (1-0.563)])
-        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_NH() is False:
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.0367, (1-0.0367)])
-        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_NH() is False:
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.0173, (1-0.0173)])
-        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_NH():
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.467, (1-0.467)])
-        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_NH():
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.228, (1-0.228)])
-        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_NH() is False:
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.0434, (1-0.0434)])
-        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_NH() is False:
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_nursing_home() is False:
             individual_dies = np.random.choice([True, False], p=[0.0145, (1-0.0145)])
-        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_NH():
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.5995, (1-0.5995)])
-        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_NH():
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
-        #print([individual.get_NH(),individual_dies])
+        #print([individual.get_nursing_home(),individual_dies])
 
         if individual_dies:
             days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)

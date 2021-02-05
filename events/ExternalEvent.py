@@ -74,10 +74,3 @@ class DiseaseStateChangedHandler(EventHandler):
         pop_upd = "UPDATE population SET disease_state = %s WHERE ID = %s"
         val = (self.event["disease_state"], self.event["ID"])
         self.pop_cursor.execute(pop_upd, val)
-
-# Handler to change nursing home dummy
-class NursingHomeChangedHandler(EventHandler):
-    def process(self):
-        pop_upd = "UPDATE population SET NH = %s WHERE ID = %s"
-        val = (self.event["NH"], self.event["ID"])
-        self.pop_cursor.execute(pop_upd, val)
