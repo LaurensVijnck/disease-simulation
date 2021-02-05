@@ -1,3 +1,4 @@
+# File is deprecated, kept in for future purposes.
 class EventHandler:
     pop_cursor = None
     event = None
