@@ -53,7 +53,7 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
         # pre_symptomatic_duration = min(incubation_duration, np.random.gamma(shape=20.52, scale=1.59, size=None))
 
         # Commute exposed duration
-        exposed_period = math.floor(incubation_duration - pre_symptomatic_duration)
+        exposed_period = max(1, round(incubation_duration - pre_symptomatic_duration))
 
         individual.pre_symptomatic_duration = math.ceil(pre_symptomatic_duration) # FUTURE: Variables specific to the disease model should be stored elsewhere
 
