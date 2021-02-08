@@ -57,6 +57,10 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         individual.pre_symptomatic_duration = math.ceil(pre_symptomatic_duration) # FUTURE: Variables specific to the disease model should be stored elsewhere
 
+        # Asymptomatic_duration
+        remaining_time_infected = round(max(0, np.random.normal(loc=6, scale=1, size=None) - pre_symptomatic_duration))
+        individual.remaining_time_infected = remaining_time_infected
+
         return DiseaseStateEnum.STATE_INFECTED, exposed_period
 
     def is_end_state(self) -> bool:
@@ -68,6 +72,10 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     FSM Node to representing the infected (pre-symptomatic) disease state.
     """
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
+
+        #print(individual.remaining_time_infected)
+        if individual.remaining_time_infected == 0:
+            return DiseaseStateEnum.STATE_RECOVERED, individual.pre_symptomatic_duration
 
         # By means of an example; we can perform any kind of computation to decide upon this.
         # SM 13/1/2021: The probability to be symptomatic follows this age distribution:
@@ -106,7 +114,7 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Determine number of days, be careful with negative state durations.
-        asymptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
+        asymptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
         return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
 
@@ -121,7 +129,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Determine number of days, be careful with negative state durations.
-        symptomatic_duration = math.floor(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
+        symptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
         # By means of an example; we can perform any kind of computation to decide upon this.
         # SM 13/1/2021: Age-sex-household-specific distribution sent to LV
@@ -164,7 +172,6 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
             individual_dies = np.random.choice([True, False], p=[0.5995, (1-0.5995)])
         if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_nursing_home():
             individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
-        #print([individual.get_nursing_home(),individual_dies])
 
         if individual_dies:
             days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)
