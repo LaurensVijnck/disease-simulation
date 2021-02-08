@@ -17,6 +17,7 @@ class Individual:
         self.__household = None
         self.__HH_position = HH_position
         self.__nursing_home = nursing_home
+
         # Parameters specific to the disease model, ideally they should be moved elsewhere.
         self.pre_symptomatic_duration = None
         self.hospitalized_duration = None
@@ -84,5 +85,5 @@ class Individual:
         """
         id = int(event["ID"])
         sex = True if event["sex"] != "M" else False
-        nursing_home = True if event["NH"] == 1 else False
+        nursing_home = True if int(event["NH"]) == 1 else False
         return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"], nursing_home)

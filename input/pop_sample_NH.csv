@@ -1,5 +1,5 @@
 "HH_ID","ID","age","sex","birth_date","ID_mother","ID_father","date_prev_birth","num_births","ID_partner","union","child","mother","father","parent","HH_adults","age_first_birth","original_ID","hh_position","partner","main_parent","random_inf","enter_pop","comm_hh_prop","child18_hh","disease_state","inf_time","age_group_hh","age_group_pop","age_group","age_group_trans","parent_pop","transition","event_date","age_partner","immigrant","HH_size","HH_children","lipro_child_hh","NH"
-362,362,48,"M",1963-05-11,NA,NA,NA,NA,8717314,1,0,0,0,0,2,NA,"000204AFDCAB8482","union",0,NA,NA,NA,NA,NA,NA,NA,3,3,26,26,0,NA,NA,48,NA,2,0,0,0
+362,362,48,"M",1963-05-11,NA,NA,NA,NA,8717314,1,0,0,0,0,2,NA,"000204AFDCAB8482","union",0,NA,NA,NA,NA,NA,NA,NA,3,3,26,26,0,NA,NA,48,NA,2,0,0,1
 362,8717314,47,"F",1964-12-16,NA,NA,NA,0,362,1,0,0,0,0,2,NA,"CAE140DCBBCB54DF","union",0,NA,NA,NA,NA,NA,NA,NA,3,3,24,24,0,NA,NA,47,NA,2,0,0,0
 522,10634253,19,"F",1992-09-20,522,6509845,NA,0,NA,0,0,0,0,0,2,NA,"F7787D19F167745C","child",1,522,NA,NA,NA,NA,NA,NA,3,3,10,10,1,NA,NA,NA,NA,5,2,3,0
 522,4190171,15,"M",1996-11-07,522,6509845,NA,NA,NA,0,1,0,0,0,2,NA,"617C1CF80A864145","child",1,522,NA,NA,NA,NA,NA,NA,2,2,10,10,1,NA,NA,NA,NA,5,2,3,0
