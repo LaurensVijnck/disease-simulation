@@ -94,7 +94,7 @@ class Disease:
             next_state, days_offset = next_node.get_next_state(individual, date)
 
             # Push onto disease deque
-            self.__disease_deque.put_element(date + dt.timedelta(days_offset), (next_state, individual))
+            self.__disease_deque.put_element(date + dt.timedelta(days=days_offset), (next_state, individual))
 
     def __process_disease_deque(self, curr_date: datetime):
         """

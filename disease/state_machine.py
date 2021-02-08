@@ -82,7 +82,7 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
         # SM 13/1/2021: The probability to be symptomatic follows this age distribution:
         # age-groups=[0-19, 20-29, 30-39, 40-49, 50-59, 60+]
         # probability= [0.07, 0.17, 0.42, 0.54, 0.83, 0.94]
-        # SM 26/1/2021: For now I have just used an 'If' function but I guess you'll have a more efficient approach/
+        # SM 26/1/2021: For now I have just used an 'If' function but I guess you'll have a more efficient approach
 
         #becomes_symptomatic = random.choice([True, False])
 
@@ -134,8 +134,6 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         # By means of an example; we can perform any kind of computation to decide upon this.
         # SM 13/1/2021: Age-sex-household-specific distribution sent to LV
-        
-        #individual_dies = random.choice([True, False])
 
         if individual.get_age(current_date) < 25 and individual.get_sex() is False:
             individual_dies = np.random.choice([True, False], p=[0.0, 1])
@@ -180,7 +178,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
             if days_until_demise > symptomatic_duration:
 
                 # FUTURE: Move hospitalized duration elsewhere.
-                individual.hospitalized_duration = days_until_demise - symptomatic_duration
+                individual.hospitalized_duration = max(1, round(days_until_demise - symptomatic_duration))
                 return DiseaseStateEnum.STATE_HOSPITALIZED, symptomatic_duration
 
             return DiseaseStateEnum.STATE_DIED, days_until_demise
@@ -198,6 +196,7 @@ class HospitalizedDiseaseStateFSMNode(DiseaseStateFSMNode):
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Duration to remain hospitalized is established in the previous node
+        # return DiseaseStateEnum.STATE_DIED, individual.hospitalized_duration
         return DiseaseStateEnum.STATE_DIED, individual.hospitalized_duration
 
     def is_end_state(self) -> bool:
