@@ -55,9 +55,10 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
         # Commute exposed duration
         exposed_period = max(1, round(incubation_duration - pre_symptomatic_duration))
 
+        # Compute duration of pre-symptomatic period
         individual.pre_symptomatic_duration = math.ceil(pre_symptomatic_duration) # FUTURE: Variables specific to the disease model should be stored elsewhere
 
-        # Asymptomatic_duration
+        # Compute duration of (a)symptomatic period
         remaining_time_infected = round(max(0, np.random.normal(loc=6, scale=1, size=None) - pre_symptomatic_duration))
         individual.remaining_time_infected = remaining_time_infected
 
@@ -73,7 +74,7 @@ class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
-        #print(individual.remaining_time_infected)
+        # If remaining time of infectious period is zero (pre-symptomatic period equals infectious period) go directly to 'recovered'
         if individual.remaining_time_infected == 0:
             return DiseaseStateEnum.STATE_RECOVERED, individual.pre_symptomatic_duration
 
