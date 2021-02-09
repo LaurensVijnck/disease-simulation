@@ -117,6 +117,54 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         # Determine number of days, be careful with negative state durations.
         asymptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
+        if individual.get_age(current_date) < 25 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0, 1])
+        if individual.get_age(current_date) < 25 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.000011, (1-0.000011)])
+        if 25 <= individual.get_age(current_date) <= 44 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.00021, (1-0.00021)])
+        if 25 <= individual.get_age(current_date) <= 44 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.00014, (1-0.00014)])
+        if 45 <= individual.get_age(current_date) <= 64 and individual.get_sex() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0029, (1-0.0029)])
+        if 45 <= individual.get_age(current_date) <= 64 and individual.get_sex():
+            individual_dies = np.random.choice([True, False], p=[0.0014, (1-0.0014)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.017, (1-0.017)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0074, (1-0.0074)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() is False and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.653, (1-0.653)])
+        if 65 <= individual.get_age(current_date) <= 74 and individual.get_sex() and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.563, (1-0.563)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0367, (1-0.0367)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0173, (1-0.0173)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() is False and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.467, (1-0.467)])
+        if 75 <= individual.get_age(current_date) <= 84 and individual.get_sex() and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.228, (1-0.228)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0434, (1-0.0434)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_nursing_home() is False:
+            individual_dies = np.random.choice([True, False], p=[0.0145, (1-0.0145)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() is False and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.5995, (1-0.5995)])
+        if individual.get_age(current_date) >= 85 and individual.get_sex() and individual.get_nursing_home():
+            individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
+
+        if individual_dies:
+            days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)
+
+            if days_until_demise > asymptomatic_duration:
+
+                # FUTURE: Move hospitalized duration elsewhere.
+                individual.hospitalized_duration = max(1, round(days_until_demise - asymptomatic_duration))
+                return DiseaseStateEnum.STATE_HOSPITALIZED, asymptomatic_duration
+
+            return DiseaseStateEnum.STATE_DIED, days_until_demise
+
         return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
 
     def is_end_state(self) -> bool:
