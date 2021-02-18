@@ -10,9 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 class Simulation:
     """
-    Class that represents the disease simulation. A simple susceptible, infected, recovered model
-    is employed. Individuals recover within a specified number of days after infection. Recovery
-    is done through a recovery queue for efficiency.
+    Class that represents the disease simulation.
     """
     def __init__(self, config, global_config):
         # Parse configuration
@@ -61,9 +59,9 @@ class Simulation:
                 self.disease_influx(self.num_influx_per_period, simulation_curr)
 
             # Disease model
-            self.disease.apply_disease_model(simulation_curr)
+            self.disease.spread_disease(simulation_curr)
             if self.terminate_prematurely and self.disease.get_num_infected() == 0:
-                self.reporter.info("Prematurely simulation, number of infected individuals reached zero.")
+                self.reporter.info("Prematurely terminating simulation, number of infected individuals reached zero.")
                 terminated_prematurely = True
                 break
 
@@ -87,6 +85,6 @@ class Simulation:
         :param curr_date: (datetime) date at which people are infected
         """
         for individual in self.population.random_gen(amount):
-            self.disease.set_infected(individual, curr_date, influx=True)
+            self.disease.transmit(individual, curr_date, influx=True)
 
 

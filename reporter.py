@@ -6,6 +6,7 @@ import importlib
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 from population.summary import PopulationSummary
+from disease.disease_state import DiseaseStateEnum
 import os
 
 
@@ -37,7 +38,7 @@ class Reporter:
         self._enabled = config.get("enabled", True)
         self._reporting_period_in_days = config.get("report_period_in_days")
         self._log_level = config.get("log_level", [])
-        self._line_length = config.get("line_length", 80)
+        self._line_length = config.get("line_length", 100)
 
         # Disease
         self.__date_format = global_config.get("date_format", "%Y-%m-%d")
@@ -98,23 +99,26 @@ class Reporter:
         msg += '=' * self._line_length + "\n"
 
         msg += _pad("Age group", 12) + " "
-        for state in self.__disease_states:
-            msg += _pad(state, 12) + " "
+        for disease_state in DiseaseStateEnum:
+            msg += _pad(disease_state.name.lower().split("_")[1], 12) + " "
 
         msg += "\n"
         msg += '-' * self._line_length + "\n"
 
         for ag in range(1, self.__num_pop_age_groups + 1):
             msg += _pad(str(ag), 12) + " "
-            msg += _pad(str(self._population_summary.get_num_susceptible(ag)), 12) + " "
-            msg += _pad(str(self._population_summary.get_num_infected(ag)), 12) + " "
-            msg += _pad(str(self._population_summary.get_num_recovered(ag)), 12) + "\n"
+
+            for disease_state in DiseaseStateEnum:
+                msg += _pad(str(self._population_summary.get_num_for_disease_state_per_ag(disease_state, ag)), 12) + " "
+
+            msg += "\n"
 
         msg += '-' * self._line_length + "\n"
         msg += _pad("total", 12) + " "
-        msg += _pad(str(self._population_summary.get_total_susceptible()), 12) + " "
-        msg += _pad(str(self._population_summary.get_total_infected()), 12) + " "
-        msg += _pad(str(self._population_summary.get_total_recovered()), 12) + "\n"
+        for disease_state in DiseaseStateEnum:
+            msg += _pad(str(self._population_summary.get_total_for_disease_state(disease_state)), 12) + " "
+
+        msg += "\n"
 
         msg += "=" * self._line_length + "\n"
 

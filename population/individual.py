@@ -1,12 +1,13 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from disease.disease_state import DiseaseStateEnum
 
 
 class Individual:
     """
     Class that represents an individual in the population.
     """
-    def __init__(self, ID, birth_date: datetime, sex, disease_state, population_age_group, household_age_group, HH_position):
+    def __init__(self, ID: int, birth_date: datetime, sex: bool, disease_state: DiseaseStateEnum, population_age_group: int, household_age_group: int, HH_position: str, nursing_home: bool):
         self.__ID = ID
         self.__birth_date = birth_date
         self.__disease_state = disease_state
@@ -15,26 +16,38 @@ class Individual:
         self.__household_age_group = household_age_group
         self.__household = None
         self.__HH_position = HH_position
+        self.__nursing_home = nursing_home
 
-    def get_disease_sate(self):
+        # Parameters specific to the disease model, ideally they should be moved elsewhere.
+        self.pre_symptomatic_duration = None
+        self.hospitalized_duration = None
+        self.remaining_time_infected = None
+
+    def get_disease_sate(self) -> DiseaseStateEnum:
         return self.__disease_state
 
     def set_disease_state(self, disease_state):
         self.__disease_state = disease_state
 
-    def get_id(self):
+    def get_id(self) -> int:
         return self.__ID
 
-    def get_birth_date(self):
+    def get_birth_date(self) -> datetime:
         return self.__birth_date
 
-    def get_sex(self):
+    def get_sex(self) -> bool:
         return self.__sex
 
-    def get_population_age_group(self):
+    def get_nursing_home(self) -> bool:
+        return self.__nursing_home
+
+    def set_nursing_home(self, nursing_home: bool):
+        self.__nursing_home = nursing_home
+
+    def get_population_age_group(self) -> int:
         return self.__population_age_group
 
-    def get_household_age_group(self):
+    def get_household_age_group(self) -> int:
         return self.__household_age_group
 
     def set_population_age_group(self, pop_age_group):
@@ -52,22 +65,13 @@ class Individual:
     def set_household(self, household):
         self.__household = household
 
-    def get_hh_position(self):
+    def get_hh_position(self) -> str:
         return self.__HH_position
 
-    def is_infected(self):
-        return self.__disease_state == 'INF'
-
-    def is_recovered(self):
-        return self.__disease_state == 'REC'
-
-    def is_susceptible(self):
-        return self.__disease_state == "SUS"
-
-    def get_age(self, current_date: datetime):
+    def get_age(self, current_date: datetime) -> int:
         return relativedelta(current_date, self.__birth_date).years
 
-    def is_child(self, current_date: datetime, max_child_age):
+    def is_child(self, current_date: datetime, max_child_age) -> bool:
         return relativedelta(current_date, self.__birth_date).years < max_child_age
 
     @staticmethod
@@ -80,5 +84,6 @@ class Individual:
         :return: (individual) as specified in the events
         """
         id = int(event["ID"])
-        sex = 1 if event["sex"] != "M" else 2
-        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, 'SUS', int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"])
+        sex = True if event["sex"] != "M" else False
+        nursing_home = True if int(event["NH"]) == 1 else False
+        return Individual(id, datetime.strptime(event["birth_date"], date_format), sex, DiseaseStateEnum.STATE_SUSCEPTIBLE, int(event["age_group_pop"]), int(event["age_group_hh"]), event["hh_position"], nursing_home)

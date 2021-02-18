@@ -2,15 +2,11 @@ import csv
 import random
 import math
 
+from datetime import datetime
 from population.household import HouseHold
 from population.individual import Individual
 from population.summary import PopulationSummary
-
-"""
-Beta value based on the age
-
-    - Concrete example of matrix to be able to implement (Signe)
-"""
+from disease.disease_state import DiseaseStateEnum
 
 
 def _pad_centered(target_str, dest_len):
@@ -26,10 +22,26 @@ class Transmission:
         random.seed(global_config["seed"])
         self.__num_pop_ag = global_config.get("num_age_groups_pop")
         self.__num_hh_ag = global_config.get("num_age_groups_hh")
-        self.__beta_pop = config.get("beta_population")
-        self.__beta_household = config.get("beta_household")
 
-        self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None), self.__beta_pop)
+        # FUTURE: Remove following parameters, as these are now specified for each disease state;
+        # self.__beta_pop = config.get("beta_population")
+        # self.__beta_household = config.get("beta_household")
+
+        # TODO: Allow supplying the following probabilities via config
+        self.__beta_pop = {
+            DiseaseStateEnum.STATE_INFECTED: 0.1,
+            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.2,
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.1,
+        }
+
+        # TODO: Allow supplying the following probabilities via config
+        self.__beta_household = {
+            DiseaseStateEnum.STATE_INFECTED: 0.25,
+            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.5,
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.25,
+        }
+
+        self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None))
         self.__hh_contact = self.__parse_nested_contact_matrix(config.get("hh_matrix", None))
         self.__hh_contact_children = self.__parse_nested_contact_matrix(config.get("hh_matrix_children", None))
 
@@ -39,7 +51,7 @@ class Transmission:
         #print("\nHousehold without children: \n")
         self.__print_nested_matrix(self.__hh_contact, self.__num_hh_ag)
 
-    def occurs(self, individual: Individual, household: HouseHold, summary: PopulationSummary):
+    def occurs(self, individual: Individual, household: HouseHold, summary: PopulationSummary, date: datetime):
         """
         Function that determines whether infection occurs for the specific individual.
 
@@ -51,7 +63,11 @@ class Transmission:
         p = random.uniform(0, 1)
         hh_trans = self.__compute_hh_infection_escape_prob(individual, household)
         pop_trans = self.__compute_pop_infection_escape_prob(individual, summary)
-        p_inf = 1 - hh_trans * pop_trans
+
+        # TODO Make this following more flexible by allowing it to be injected via the config
+        susceptibility_adjustment = 0.5 if individual.is_child(date, summary._population.get_age_child_limit()) else 1
+
+        p_inf = susceptibility_adjustment * (1 - hh_trans * pop_trans)
         return p < p_inf, hh_trans, pop_trans
 
     def __compute_hh_infection_escape_prob(self, individual: Individual, household: HouseHold):
@@ -62,13 +78,22 @@ class Transmission:
         :param household: (household) household of the individual
         :return: (float) probability of escaping household disease transmission
         """
-        contacts = 0
+        inf_contacts = 0
+        asymp_contacts = 0
+        symp_contacts = 0
         contact_matrix = self.__hh_contact_children if household.has_children() else self.__hh_contact
 
-        for (age_group, sex, num) in household.infected_by_sex_gen():
-            contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+        # TODO This may need some improvement code-wise.
+        for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
+            inf_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
 
-        return (1 - self.__beta_household) ** contacts
+        for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_ASYMPTOMATIC):
+            asymp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+
+        for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_SYMPTOMATIC):
+            symp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+
+        return (1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts
 
     def __compute_pop_infection_escape_prob(self, individual: Individual, summary: PopulationSummary):
         """
@@ -78,14 +103,24 @@ class Transmission:
         :return: (float) probability of escaping external disease transmission
         """
         escape_prob = 1
-        for (age_group, num_infected) in summary.infected_gen():
-            beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1]
-            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num_infected
+
+        # TODO This may need some improvement code-wise.
+        for (age_group, num) in summary.num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
+            beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1] * self.__beta_pop[DiseaseStateEnum.STATE_INFECTED]
+            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num
+
+        for (age_group, num) in summary.num_for_disease_state_gen(DiseaseStateEnum.STATE_ASYMPTOMATIC):
+            beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1] * self.__beta_pop[DiseaseStateEnum.STATE_ASYMPTOMATIC]
+            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num
+
+        for (age_group, num) in summary.num_for_disease_state_gen(DiseaseStateEnum.STATE_SYMPTOMATIC):
+            beta_pop = self.__pop_contact[individual.get_population_age_group()-1][age_group-1] * self.__beta_pop[DiseaseStateEnum.STATE_SYMPTOMATIC]
+            escape_prob *= (1 - beta_pop * summary.get_adjustment(age_group)) ** num
 
         return escape_prob
 
     @staticmethod
-    def __parse_simple_contact_matrix(matrix_location, beta):
+    def __parse_simple_contact_matrix(matrix_location):
         """
         Function to read a csv-formatted probability matrix in memory, matrix is adjusted with the specified beta.
 
@@ -98,7 +133,7 @@ class Transmission:
             for csv_line in csv_reader:
                 row = []
                 for el in csv_line:
-                    row.append(beta * float(el))
+                    row.append(float(el))
                 matrix.append(row)
 
         return matrix

@@ -7,7 +7,7 @@ from libraries.deep_dict import DeepDict
 
 class ConfigHandler:
     """
-        Load configuration from arguments
+    Load configuration from arguments
     """
     def __init__(self):
         self.simulation_config = None
