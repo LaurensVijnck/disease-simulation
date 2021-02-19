@@ -41,12 +41,18 @@ class Disease:
         Function to apply the disease model on the population as-is. The population
         and recovery queue is updated accordingly.
         """
+        self.__process_disease_deque(curr_date)
+
+        # Snapshot is taken _after_ disease queue is processed
         summary = PopulationSummary(self.__population, self.__population.get_base_distribution())
         self.__reporter.set_population_summary(summary)
         self.__disease_logger.log_summary(curr_date, summary)
-        self.__process_disease_deque(curr_date)
 
         for household in self.__population.household_gen():
+
+            # TODO: Fetch the household network
+
+            # Create snapshot household metrics
             household.compute_metrics(curr_date, self.__population.get_age_child_limit())
 
             for individual in household.member_gen():

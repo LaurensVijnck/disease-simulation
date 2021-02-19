@@ -4,7 +4,6 @@ from disease.disease_state import DiseaseStateEnum
 from population.individual import Individual
 import numpy as np
 import math
-import random
 
 
 class DiseaseStateFSMNode(ABC):
@@ -115,6 +114,7 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
     def get_next_state(self, individual: Individual, current_date: datetime) -> (DiseaseStateFSMNode, int):
 
         # Determine number of days, be careful with negative state durations.
+        # FUTURE: Extract logic below into .csv provided matrices - LVI
         asymptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
         if individual.get_age(current_date) < 25 and individual.get_sex() is False:
@@ -180,9 +180,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         # Determine number of days, be careful with negative state durations.
         symptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
 
-        # By means of an example; we can perform any kind of computation to decide upon this.
-        # SM 13/1/2021: Age-sex-household-specific distribution sent to LV
-
+        # FUTURE: Extract logic below into .csv provided matrices
         if individual.get_age(current_date) < 25 and individual.get_sex() is False:
             individual_dies = np.random.choice([True, False], p=[0.0, 1])
         if individual.get_age(current_date) < 25 and individual.get_sex():
@@ -263,7 +261,7 @@ class DiedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the died disease state.
 
-    TODO: Currently people that died are still part of the population. Do we need to exclude these?
+    TODO: Currently people that died are still part of the population. Do we need to exclude these? - LVI
     """
     def is_end_state(self) -> bool:
         return True
@@ -277,8 +275,8 @@ class DiseaseFSM:
         self._nodes = {}
         self._create_nodes()
 
-        # TODO Seed the generator numpy.random.seed
-        # TODO Disease deque should be managed at _this_ level
+        # TODO Seed the generator numpy.random.seed - LVI
+        # TODO Disease deque should be managed at _this_ level - LVI
 
     def _create_nodes(self):
         """
