@@ -29,9 +29,9 @@ class Transmission:
 
         # TODO: Allow supplying the following probabilities via config
         self.__beta_pop = {
-            DiseaseStateEnum.STATE_INFECTED: 3,
-            DiseaseStateEnum.STATE_SYMPTOMATIC: 6,
-            DiseaseStateEnum.STATE_ASYMPTOMATIC: 3,
+            DiseaseStateEnum.STATE_INFECTED: 0.1,
+            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.2,
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.1,
         }
 
         # TODO: Allow supplying the following probabilities via config
