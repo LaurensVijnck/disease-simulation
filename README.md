@@ -1,3 +1,37 @@
+# Disease simulation
+
+Highly-configurable application to simulate infections diseases.
+
+## Installation
+
+To install the package locally on your machine, make sure you are in the folder
+where the `disease-simulation` is located. Enter the following command in the terminal 
+to install the package:
+
+```bash
+pip install .
+```
+
+## Running the simulation
+
+The simulation can be started by executing the command below (and referencing a _valid_ configuration file).
+
+```bash
+python3 main.py --conf config/settings.toml
+```
+
+## Disease Simulation Concepts
+
+Within the sections below, we'll briefly cover the different concepts involved. Refer 
+to `doc/disease_model.png` for a schematic overview.
+
+### Configuration TOML
+
+The entire simulation is configured by means of a simple `.toml` file. The configuration is dispatched
+to the various components throughout the application, e.g., the population and transmission model. An 
+example can be found below:
+
+```toml
 # ----------------------------------------------------------------------------------------------------------------------
 [global]
     seed = 453                                                      # seed value to yield reproducable results
@@ -56,3 +90,28 @@ terminate_on_zero_infected = true                                   # terminate 
     initial_population = "./input/pop_sample_NH.csv"                # location initial population csv
     event_log = "./input/event_log_sample_NH.csv"                   # location demographic events log
 # ----------------------------------------------------------------------------------------------------------------------
+```
+
+### Event Log
+
+The most prevalent concept is that of an event log. The event log is an input log file that contains logs
+representing demographic events, e.g., births, deaths, etc.
+
+Recall that this simulation executes on a discrete, day-to-day fashion. On each iteration, the `EventLogPlayer`
+plays the events for the specific day and updates the population accordingly. The disease model
+is subsequently invoked to simulate the transmission for the iteration. 
+
+### Transmission model
+
+The application currently leverages a two-level mixing model. This implies that
+the logic distinguishes between transmission internal to or external from a specific household. 
+The probability of getting infected is hence based on age- and sex-specific
+contact matrices and a snapshot of the population/household respectively. 
+
+### Disease state machine
+
+The stages of the disease are expressed by means of a state 
+machine, e.g., infected, hospitalized, etc. The machine describes
+the various states of the disease and rules for transitioning between
+these states.
+
