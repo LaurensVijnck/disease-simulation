@@ -43,6 +43,12 @@ terminate_on_zero_infected = true                                   # terminate 
         pop_matrix = "./input/pop_contact.csv"                      # location population contact matrix
         hh_matrix = "./input/hh_contact_no_children.csv"            # location household contact matrix
         hh_matrix_children = "./input/hh_contact_children.csv"      # location household with children contact matrix
+        pop_state_infected = 0.1
+        pop_state_symptomatic =  0.2
+        pop_state_asymptomatic = 0.1
+        household_state_infected  = 0.25
+        household_state_symptomatic = 0.5
+        household_state_asymptomatic = 0.25
 
         # beta_household = 0.05                                     # beta household (Deprecated, currently specified in the transmission model)
         # beta_population = 0.95                                    # beta population (Deprecated, currently specified in the transmission model)
