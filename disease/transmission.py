@@ -86,12 +86,18 @@ class Transmission:
         # TODO This may need some improvement code-wise.
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
             inf_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+        if inf_contacts>10:
+            inf_contacts==10
 
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_ASYMPTOMATIC):
             asymp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+        if asymp_contacts>10:
+            asymp_contacts==10
 
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_SYMPTOMATIC):
             symp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+        if symp_contacts>10:
+            symp_contacts==10
 
         return (1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts
 
