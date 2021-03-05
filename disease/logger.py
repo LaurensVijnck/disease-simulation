@@ -91,8 +91,8 @@ class DiseaseLogger:
                 "age": individual.get_age(date),
                 # "inf_age_distribution": serialize_age_distribution(household.get_infected_age_distribution()),
                 "num_infected_hh": household.get_total_for_disease_state(DiseaseStateEnum.STATE_INFECTED),
-                "num_symptomatic_hh": +household.get_total_for_disease_state(DiseaseStateEnum.STATE_SYMPTOMATIC),
-                "num_asymptomatic_hh": +household.get_total_for_disease_state(DiseaseStateEnum.STATE_ASYMPTOMATIC),
+                "num_symptomatic_hh": household.get_total_for_disease_state(DiseaseStateEnum.STATE_SYMPTOMATIC),
+                "num_asymptomatic_hh": household.get_total_for_disease_state(DiseaseStateEnum.STATE_ASYMPTOMATIC),
                 "hh_size": household.get_size(),
                 "NH": individual.get_nursing_home()
 
