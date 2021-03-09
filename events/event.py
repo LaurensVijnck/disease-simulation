@@ -72,7 +72,7 @@ class HHTransitionEventHandler(EventHandler):
             # Individual changed household
             self._population.remove_from_household(individual)
             self._population.add_to_household(individual, int(self._event["HH_ID_target"]))
-            individual.set_NH(True if self._event["NH"] == 1 else False)
+            individual.set_nursing_home(True if self._event["NH"] == 1 else False)
 
         # Individual changed solely household position
         individual.set_hh_position(self._event["hh_position_target"])

@@ -1,16 +1,16 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [global]
-    seed = 453                                                      # seed value to yield reproducable results
+    seed = 3                                                      # seed value to yield reproducable results
     date_format = "%Y-%m-%d"                                        # date format used globally
     num_age_groups_pop = 4                                          # number of population age groups
     num_age_groups_hh = 4                                           # number of household age groups
 
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
-start_date = "2010-1-1"                                             # start date simulation
-end_date = "2010-12-31"                                             # end date simulation
+start_date = "2011-1-1"                                             # start date simulation
+end_date = "2011-12-31"                                             # end date simulation
 
-initial_influx = 10                                                 # initial influx
+initial_influx = 3                                                                                   # initial influx
 influx_period_in_days = 2                                           # influx every x days
 num_influx_per_period = 0                                           # daily influx
 
@@ -43,12 +43,12 @@ terminate_on_zero_infected = true                                   # terminate 
         pop_matrix = "./input/pop_contact.csv"                      # location population contact matrix
         hh_matrix = "./input/hh_contact_no_children.csv"            # location household contact matrix
         hh_matrix_children = "./input/hh_contact_children.csv"      # location household with children contact matrix
-        pop_state_infected = 0.005
-        pop_state_symptomatic =  0.01
-        pop_state_asymptomatic = 0.005
-        household_state_infected  = 0.15#0.2
-        household_state_symptomatic = 0.3#0.4
-        household_state_asymptomatic = 0.15#0.2
+        pop_state_infected = 0.006
+        pop_state_symptomatic =  0.012
+        pop_state_asymptomatic = 0.006
+        household_state_infected  = 0.1#0.2
+        household_state_symptomatic = 0.2#0.4
+        household_state_asymptomatic = 0.1#0.2
 
         # beta_household = 0.05                                     # beta household (Deprecated, currently specified in the transmission model)
         # beta_population = 0.95                                    # beta population (Deprecated, currently specified in the transmission model)
@@ -59,6 +59,6 @@ terminate_on_zero_infected = true                                   # terminate 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
     base_population = [1602267, 768437, 6157204, 2410827]                   # Base population is used to compute base age distribution (used to compute adjustment in disease model). From age-distribtution used to compute contact rates per capita
-    initial_population = "./input/pop_sample_NH.csv"  #"./input/pop_sample_DONT_UPLOAD.csv"#              # location initial population csv
-    event_log = "./input/event_log_sample_NH.csv"  #"./input/event_log_sample_DONT_UPLOAD.csv" #                # location demographic events log
+    initial_population = "./input/pop_sample_DONT_UPLOAD.csv"  #              # location initial population csv
+    event_log = "./input/event_log_sample_DONT_UPLOAD.csv" #"./input/event_log_sample_NH.csv"  #                # location demographic events log
 # ----------------------------------------------------------------------------------------------------------------------
