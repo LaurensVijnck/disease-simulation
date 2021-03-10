@@ -91,6 +91,10 @@ class Disease:
         # Set disease state for the individual)
         individual.set_disease_state(disease_state)
 
+        # HOTFIX: Died individuals are not removed from their household - LVI
+        if disease_state == DiseaseStateEnum.STATE_DIED:
+            self.__population.remove_from_household(individual)
+
         # Resolve state to FSM node
         next_node = self.__disease_fsm.get_node_for_type(disease_state)
 
