@@ -92,6 +92,7 @@ class Disease:
         individual.set_disease_state(disease_state)
 
         # HOTFIX: Died individuals are not removed from their household - LVI
+        # FUTURE: Provide hooks allow manipulation the population in the disease FSM?
         if disease_state == DiseaseStateEnum.STATE_DIED:
             self.__population.remove_from_household(individual)
 
