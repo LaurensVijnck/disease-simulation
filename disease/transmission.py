@@ -29,16 +29,16 @@ class Transmission:
 
         # TODO: Allow supplying the following probabilities via config
         self.__beta_pop = {
-            DiseaseStateEnum.STATE_INFECTED: 0.1,
-            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.2,
-            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.1,
+            DiseaseStateEnum.STATE_INFECTED: config.get("pop_state_infected"),
+            DiseaseStateEnum.STATE_SYMPTOMATIC: config.get("pop_state_symptomatic"),
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: config.get("pop_state_asymptomatic"),
         }
 
         # TODO: Allow supplying the following probabilities via config
         self.__beta_household = {
-            DiseaseStateEnum.STATE_INFECTED: 0.25,
-            DiseaseStateEnum.STATE_SYMPTOMATIC: 0.5,
-            DiseaseStateEnum.STATE_ASYMPTOMATIC: 0.25,
+            DiseaseStateEnum.STATE_INFECTED: config.get("household_state_infected"),
+            DiseaseStateEnum.STATE_SYMPTOMATIC: config.get("household_state_symptomatic"),
+            DiseaseStateEnum.STATE_ASYMPTOMATIC: config.get("household_state_symptomatic"),
         }
 
         self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None))
@@ -92,6 +92,13 @@ class Transmission:
 
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_SYMPTOMATIC):
             symp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
+
+        while ((symp_contacts+asymp_contacts+inf_contacts)>10):
+            inf_contacts -= 1
+            if (symp_contacts+asymp_contacts+inf_contacts)>10:
+                asymp_contacts -= 1
+                if (symp_contacts + asymp_contacts + inf_contacts) > 10:
+                    symp_contacts -= 1
 
         return (1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts
 
