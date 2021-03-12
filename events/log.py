@@ -79,14 +79,14 @@ class EventLogPlayer:
          This function is used to compute the base age distribution. This is done because the base age
          distribution may differ from the initial population (i.e., when it is fast-forwarded).
         """
-        result = [0]*self.__num_age_groups_pop
-        with open(base_csv, mode='r') as pop_csv:
-            csv_reader = csv.DictReader(pop_csv)
-            for row in csv_reader:
-                if csv_reader.line_num == 0:
-                    continue
-
-                individual = Individual.create(row, self.__date_format)
-                result[individual.get_population_age_group()-1]+=1
+        result = base_csv #[0]*self.__num_age_groups_pop
+        # with open(base_csv, mode='r') as pop_csv:
+        #     csv_reader = csv.DictReader(pop_csv)
+        #     for row in csv_reader:
+        #         if csv_reader.line_num == 0:
+        #             continue
+        #
+        #         individual = Individual.create(row, self.__date_format)
+        #         result[individual.get_population_age_group()-1]+=1
         self.__reporter.info(f'base_population_computed {result}')
         self.__population.set_base_distribution(result)
