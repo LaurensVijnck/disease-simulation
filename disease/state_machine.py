@@ -66,7 +66,6 @@ class ExposedDiseaseStateFSMNode(DiseaseStateFSMNode):
     def is_end_state(self) -> bool:
         return False
 
-
 class InfectedDiseaseStateFSMNode(DiseaseStateFSMNode):
     """
     FSM Node to representing the infected (pre-symptomatic) disease state.

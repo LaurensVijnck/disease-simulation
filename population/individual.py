@@ -22,6 +22,7 @@ class Individual:
         self.pre_symptomatic_duration = None
         self.hospitalized_duration = None
         self.remaining_time_infected = None
+        self.index_case = False
 
     def get_disease_sate(self) -> DiseaseStateEnum:
         return self.__disease_state

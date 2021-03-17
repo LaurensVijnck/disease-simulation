@@ -87,6 +87,7 @@ class Simulation:
         for individual in self.population.random_gen(amount):
 
             # TODO: What happens when individual is already in the disease state machine? Should we ignore? - LVI
+            individual.index_case = True
             self.disease.transmit(individual, curr_date, influx=True)
 
 
