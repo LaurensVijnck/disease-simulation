@@ -73,7 +73,7 @@ def create_config_file_path(config_dir_path, val_dict):
     pathlib.Path
         path to the new configuration file
     '''
-    return config_dir_path / f"config_{val_dict['id']:04d}.toml"
+    return config_dir_path / f"config_{val_dict['id']}.toml"
 
 def create_config_files(config_dir_path, tmpl, data_path):
     '''create the configuration files based on a template and the CSV file
