@@ -68,8 +68,7 @@ class Disease:
         Function to call when disease is transmitted to an individual.
         """
         self.__disease_logger.log_transmission(individual, date, influx, hh_trans, pop_trans)
-        if individual.index_case:
-            self.__add_to_disease_deque(individual, date, self.__disease_fsm.get_start_node().get_disease_state())
+        self.__add_to_disease_deque(individual, date, self.__disease_fsm.get_start_node().get_disease_state())
 
     def get_num_infected(self):
         """
