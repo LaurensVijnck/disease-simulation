@@ -36,7 +36,13 @@ class Population:
         :param amount: (number) number of individuals to sample
         :return: (generator) random individuals generator
         """
-        individuals = random.sample(list(self.__population.values()), amount)
+        individuals = []
+        for household in self.__households:
+            HH_cur = self.__households[household]
+            individuals.extend(random.sample(list(HH_cur.member_gen()), 1))
+
+        #individuals = random.sample(list(self.__population.values()), 3)
+        #print(self.__population.values())
         for ind in individuals:
             yield ind
 

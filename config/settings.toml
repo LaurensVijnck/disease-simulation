@@ -7,8 +7,8 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
-start_date = "2011-1-1"                                             # start date simulation
-end_date = "2011-2-1"                                             # end date simulation
+start_date = "2010-1-1"                                             # start date simulation
+end_date = "2011-12-31"                                             # end date simulation
 
 initial_influx = 1                                                                                   # initial influx
 influx_period_in_days = 2                                           # influx every x days
@@ -43,9 +43,9 @@ terminate_on_zero_infected = true                                   # terminate 
         pop_matrix = "./input/pop_contact.csv"                      # location population contact matrix
         hh_matrix = "./input/hh_contact_no_children.csv"            # location household contact matrix
         hh_matrix_children = "./input/hh_contact_children.csv"      # location household with children contact matrix
-        pop_state_infected = 0.006
-        pop_state_symptomatic =  0.012
-        pop_state_asymptomatic = 0.006
+        pop_state_infected = 0#0.006
+        pop_state_symptomatic =  0#0.012
+        pop_state_asymptomatic = 0#0.006
         household_state_infected  = 0.1#0.2
         household_state_symptomatic = 0.2#0.4
         household_state_asymptomatic = 0.1#0.2
