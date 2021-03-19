@@ -85,6 +85,8 @@ class Simulation:
         :param curr_date: (datetime) date at which people are infected
         """
         for individual in self.population.random_gen(amount):
+
+            # TODO: What happens when individual is already in the disease state machine? Should we ignore? - LVI
             self.disease.transmit(individual, curr_date, influx=True)
 
 
