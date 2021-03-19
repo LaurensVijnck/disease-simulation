@@ -25,6 +25,8 @@ python3 main.py --conf config/settings.toml
 Within the sections below, we'll briefly cover the different concepts involved. Refer 
 to `doc/disease_model.png` for a schematic overview.
 
+![alt text](https://github.com/LaurensVijnck/disease-simulation/blob/master/doc/disease_model.png?raw=true)
+
 ### Configuration TOML
 
 The entire simulation is configured by means of a simple `.toml` file. The configuration is dispatched
