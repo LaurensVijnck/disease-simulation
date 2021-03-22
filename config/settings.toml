@@ -7,7 +7,7 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [simulation]
-start_date = "2010-1-1"                                             # start date simulation
+start_date = "2011-1-1"                                             # start date simulation
 end_date = "2011-12-31"                                             # end date simulation
 
 initial_influx = 1                                                                                   # initial influx
