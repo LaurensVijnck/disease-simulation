@@ -161,8 +161,8 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
                 # FUTURE: Move hospitalized duration elsewhere.
                 individual.hospitalized_duration = max(1, round(days_until_demise - asymptomatic_duration))
                 return DiseaseStateEnum.STATE_HOSPITALIZED, asymptomatic_duration
-
-            return DiseaseStateEnum.STATE_DIED, days_until_demise
+            else:
+                return DiseaseStateEnum.STATE_DIED, round(days_until_demise)
 
         return DiseaseStateEnum.STATE_RECOVERED, asymptomatic_duration
 
@@ -178,6 +178,8 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
 
         # Determine number of days, be careful with negative state durations.
         symptomatic_duration = individual.remaining_time_infected #round(max(0, np.random.normal(loc=6, scale=1, size=None) - individual.pre_symptomatic_duration))
+        #if (symptomatic_duration>20 or symptomatic_duration<=0):
+        #    print([symptomatic_duration, individual.get_id()])
 
         # FUTURE: Extract logic below into .csv provided matrices
         if individual.get_age(current_date) < 25 and individual.get_sex() is False:
@@ -220,13 +222,15 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
         if individual_dies:
             days_until_demise = np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)
 
+            print([days_until_demise,days_until_demise > symptomatic_duration, individual.get_id()])
             if days_until_demise > symptomatic_duration:
 
                 # FUTURE: Move hospitalized duration elsewhere.
                 individual.hospitalized_duration = max(1, round(days_until_demise - symptomatic_duration))
                 return DiseaseStateEnum.STATE_HOSPITALIZED, symptomatic_duration
 
-            return DiseaseStateEnum.STATE_DIED, days_until_demise
+            else:
+                return DiseaseStateEnum.STATE_DIED, round(days_until_demise)
 
         return DiseaseStateEnum.STATE_RECOVERED, symptomatic_duration
 
