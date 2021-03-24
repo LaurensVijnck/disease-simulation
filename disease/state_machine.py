@@ -154,7 +154,7 @@ class AsymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
             individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
 
         if individual_dies:
-            days_until_demise = round(np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None))
+            days_until_demise = max(1,round(np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)))
 
             if days_until_demise > asymptomatic_duration:
 
@@ -218,7 +218,7 @@ class SymptomaticDiseaseStateFSMNode(DiseaseStateFSMNode):
             individual_dies = np.random.choice([True, False], p=[0.325, (1-0.325)])
 
         if individual_dies:
-            days_until_demise = round(np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None))
+            days_until_demise = max(1,round(np.random.lognormal(mean=2.4531093, sigma=0.8371099, size=None)))
 
             if days_until_demise > symptomatic_duration:
 
