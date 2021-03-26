@@ -41,6 +41,9 @@ class Transmission:
             DiseaseStateEnum.STATE_ASYMPTOMATIC: config.get("household_state_symptomatic"),
         }
 
+        self.__delta = config.get("delta")
+        self.__delta_nursing_home = config.get("delta_nursing_home")
+
         self.__pop_contact = self.__parse_simple_contact_matrix(config.get("pop_matrix", None))
         self.__hh_contact = self.__parse_nested_contact_matrix(config.get("hh_matrix", None))
         self.__hh_contact_children = self.__parse_nested_contact_matrix(config.get("hh_matrix_children", None))
@@ -81,7 +84,12 @@ class Transmission:
         inf_contacts = 0
         asymp_contacts = 0
         symp_contacts = 0
-        contact_matrix = self.__hh_contact_children if household.has_children() else self.__hh_contact
+        contact_matrix = self.__hh_contact_children if (household.has_children() and (individual.get_nursing_home() is False)) else self.__hh_contact
+
+        if individual.get_nursing_home():
+            delta_contacts = self.__delta_nursing_home
+        else:
+            delta_contacts = self.__delta
 
         # TODO This may need some improvement code-wise.
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
@@ -93,12 +101,12 @@ class Transmission:
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_SYMPTOMATIC):
             symp_contacts += num * contact_matrix[individual.get_household_age_group()-1][age_group-1][individual.get_sex()-1][sex-1]
 
-        while ((symp_contacts+asymp_contacts+inf_contacts)>10):
-            inf_contacts -= 1
-            if (symp_contacts+asymp_contacts+inf_contacts)>10:
+        while ((symp_contacts+asymp_contacts+inf_contacts)>delta_contacts):
+            symp_contacts -= 1
+            if (symp_contacts+asymp_contacts+inf_contacts)>delta_contacts:
                 asymp_contacts -= 1
-                if (symp_contacts + asymp_contacts + inf_contacts) > 10:
-                    symp_contacts -= 1
+                if (symp_contacts + asymp_contacts + inf_contacts) > delta_contacts:
+                    inf_contacts -= 1
 
         return (1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts
 

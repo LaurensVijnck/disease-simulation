@@ -46,9 +46,12 @@ terminate_on_zero_infected = true                                   # terminate 
         pop_state_infected = 0.006
         pop_state_symptomatic =  0.012
         pop_state_asymptomatic = 0.006
-        household_state_infected  = 0.1#0.2
-        household_state_symptomatic = 0.2#0.4
-        household_state_asymptomatic = 0.1#0.2
+        household_state_infected  = 0.025#0.2
+        household_state_symptomatic = 0.05#0.4
+        household_state_asymptomatic = 0.025#0.2
+
+        delta                        = 10.0                           # adjustment of maximum number of contacts in non-nursing homes
+        delta_nursing_home           = 5.0                            # adjustment of maximum number of contacts in nursing homes
 
         # beta_household = 0.05                                     # beta household (Deprecated, currently specified in the transmission model)
         # beta_population = 0.95                                    # beta population (Deprecated, currently specified in the transmission model)
