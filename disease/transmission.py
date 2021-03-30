@@ -65,13 +65,15 @@ class Transmission:
         """
         p = random.uniform(0, 1)
         hh_trans = self.__compute_hh_infection_escape_prob(individual, household)
+        contacts_hh = hh_trans[1]
+        hh_trans = hh_trans[0]
         pop_trans = self.__compute_pop_infection_escape_prob(individual, summary)
 
         # TODO Make this following more flexible by allowing it to be injected via the config
         susceptibility_adjustment = 0.5 if individual.is_child(date, summary._population.get_age_child_limit()) else 1
 
         p_inf = susceptibility_adjustment * (1 - hh_trans * pop_trans)
-        return p < p_inf, hh_trans, pop_trans
+        return p < p_inf, hh_trans, pop_trans, contacts_hh
 
     def __compute_hh_infection_escape_prob(self, individual: Individual, household: HouseHold):
         """
@@ -90,7 +92,7 @@ class Transmission:
             delta_contacts = self.__delta_nursing_home
         else:
             delta_contacts = self.__delta
-        #print(delta_contacts)
+        #print([individual.get_nursing_home(),delta_contacts])
 
         # TODO This may need some improvement code-wise.
         for (age_group, sex, num) in household.get_num_for_disease_state_gen(DiseaseStateEnum.STATE_INFECTED):
@@ -104,16 +106,18 @@ class Transmission:
 
 
         while ((symp_contacts+asymp_contacts+inf_contacts)>delta_contacts):
-            #print([individual.get_id(),symp_contacts+asymp_contacts+inf_contacts])
             symp_contacts -= 1
             if (symp_contacts+asymp_contacts+inf_contacts)>delta_contacts:
                 asymp_contacts -= 1
                 if (symp_contacts + asymp_contacts + inf_contacts) > delta_contacts:
                     inf_contacts -= 1
 
+        if (household.get_id()==17108 and (symp_contacts + asymp_contacts + inf_contacts)>0):
+            print([individual.get_nursing_home(), symp_contacts + asymp_contacts + inf_contacts])
 
+        contacts_hh = (symp_contacts + asymp_contacts + inf_contacts)
 
-        return (1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts
+        return [((1 - self.__beta_household[DiseaseStateEnum.STATE_INFECTED]) ** inf_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_ASYMPTOMATIC]) ** asymp_contacts * (1 - self.__beta_household[DiseaseStateEnum.STATE_SYMPTOMATIC]) ** symp_contacts), contacts_hh]
 
     def __compute_pop_infection_escape_prob(self, individual: Individual, summary: PopulationSummary):
         """

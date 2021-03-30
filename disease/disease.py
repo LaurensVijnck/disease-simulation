@@ -59,15 +59,15 @@ class Disease:
 
                 if individual.get_disease_sate() == DiseaseStateEnum.STATE_SUSCEPTIBLE:
 
-                    transmission_occurs, hh_trans, pop_trans = self.__transmission.occurs(individual, household, summary, curr_date)
+                    transmission_occurs, hh_trans, pop_trans, contacts_hh = self.__transmission.occurs(individual, household, summary, curr_date)
                     if transmission_occurs:
-                        self.transmit(individual, curr_date, False, hh_trans, pop_trans)
+                        self.transmit(individual, curr_date, False, hh_trans, pop_trans, contacts_hh)
 
-    def transmit(self, individual: Individual, date: datetime, influx=False, hh_trans=0, pop_trans=0):
+    def transmit(self, individual: Individual, date: datetime, influx=False, hh_trans=0, pop_trans=0, contacts_hh=0):
         """
         Function to call when disease is transmitted to an individual.
         """
-        self.__disease_logger.log_transmission(individual, date, influx, hh_trans, pop_trans)
+        self.__disease_logger.log_transmission(individual, date, influx, hh_trans, pop_trans, contacts_hh)
         self.__add_to_disease_deque(individual, date, self.__disease_fsm.get_start_node().get_disease_state())
 
     def get_num_infected(self):

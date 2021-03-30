@@ -46,6 +46,7 @@ class DiseaseLogger:
             "influx",
             "hh_trans_escp",
             "pop_trans_escp",
+			"contacts_hh",
             "id",
             "HH_ID",
             "sex",
@@ -75,7 +76,7 @@ class DiseaseLogger:
             self.__sim_output_file, self.__sim_log = self._initialize_file_sink(self.__sim_log_file_name, sim_cols)
             self.__disease_log_out_file, self.__disease_log = self._initialize_file_sink(self.__disease_log_file_name, disease_cols)
 
-    def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp):
+    def log_transmission(self, individual: Individual, date: datetime, influx, hh_trans_escp, pop_trans_escp, contacts_hh):
         if self.__enabled:
             date_formatted = date.strftime(self.__date_format)
             household = individual.get_household()
@@ -85,6 +86,7 @@ class DiseaseLogger:
                 "influx": int(influx),
                 "hh_trans_escp": hh_trans_escp,
                 "pop_trans_escp": pop_trans_escp,
+				"contacts_hh": contacts_hh,
                 "id": individual.get_id(),
                 "HH_ID": household.get_id(),
                 "sex": individual.get_sex(),
