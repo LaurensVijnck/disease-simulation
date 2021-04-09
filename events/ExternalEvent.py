@@ -54,9 +54,9 @@ class HHTransitionEventHandler(EventHandler):
         pop_upd = "UPDATE population SET HH_ID = %s, HH_position = %s WHERE ID = %s"
 
         if self.event["HH_ID_target"] == 'NA':
-            self.event["HH_ID_target"] = self.event["HH_ID"]
+            self.event["HH_ID_target"] = int(self.event["HH_ID"])
 
-        val = (self.event["HH_ID_target"], self.event["hh_position_target"], self.event["ID"])
+        val = (int(self.event["HH_ID_target"]), self.event["hh_position_target"], self.event["ID"])
         self.pop_cursor.execute(pop_upd, val)
 
 
