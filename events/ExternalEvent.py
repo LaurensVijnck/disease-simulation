@@ -36,7 +36,7 @@ class EventHandler:
 class AddToPopEventHandler(EventHandler):
     def process(self):
         pop_ins = "INSERT INTO population (id, birth_date, sex population_age_group, household_age_group, HH_ID, hh_position, NH) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (self.event["ID"], self.event["birth_date"], self.event["sex"], self.event["age_group_pop"], min(int(self.event["age_group_hh"]), 4), self.event["HH_ID"], self.event["hh_position"], self.event["NH"])
+        val = (self.event["ID"], self.event["birth_date"], self.event["sex"], self.event["age_group_pop"], min(int(self.event["age_group_hh"]), 4), int(self.event["HH_ID"]), self.event["hh_position"], self.event["NH"])
         self.pop_cursor.execute(pop_ins, val)
 
 
