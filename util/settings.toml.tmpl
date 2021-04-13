@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [global]
-    seed = 453                                                      # seed value to yield reproducable results
+    seed = {seed}                                                   # seed value to yield reproducable results
     date_format = "%Y-%m-%d"                                        # date format used globally
     num_age_groups_pop = 4                                          # number of population age groups
     num_age_groups_hh = 4                                           # number of household age groups
@@ -10,7 +10,7 @@
 start_date = "2011-1-1"                                             # start date simulation
 end_date = "2011-12-31"                                             # end date simulation
 
-initial_influx = 3                                                 # initial influx
+initial_influx = 10                                                 # initial influx
 influx_period_in_days = 2                                           # influx every x days
 num_influx_per_period = 0                                           # daily influx
 
@@ -19,7 +19,7 @@ terminate_on_zero_infected = true                                   # terminate 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.reporter]
     enabled = true                                                  # whether to report while running
-    report_period_in_days = 2                                       # report every x days
+    report_period_in_days = 100                                       # report every x days
     line_length = 100                                               # line length for formatting
 
     sink = "console"                                                # sink for writing reporter data
@@ -49,6 +49,9 @@ terminate_on_zero_infected = true                                   # terminate 
         household_state_infected  = {household_state_infected}
         household_state_symptomatic = {household_state_symptomatic}
         household_state_asymptomatic = {household_state_asymptomatic}
+        delta                        = {delta}                           # adjustment of maximum number of contacts in non-nursing homes
+        delta_nursing_home           = {delta_nursing_home}
+
 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.population]
@@ -56,7 +59,7 @@ terminate_on_zero_infected = true                                   # terminate 
 
     # ------------------------------------------------------------------------------------------------------------------
     [simulation.log_player]
-    base_population = [1602267, 768437, 6157204, 2410827]                   # Base population is used to compute base age distribution (used to compute adjustment in disease model). From age-distribtution used to compute contact rates per capita
-    initial_population = "./input/pop_large_sample_10032020.csv"  #              # location initial population csv
-    event_log = "./input/event_log_large_sample_10032020.csv" #"./input/event_log_sample_NH.csv"  #                # location demographic events log
+    base_population = [1602267, 768437, 6157204, 2410827]                   # Base population is used to compute base age distribution (used to compute adjustment in disease model)
+    initial_population = "./input/pop_large_sample_10032020.csv"                # location initial population csv
+    event_log = "./input/event_log_large_sample_10032020.csv"                   # location demographic events log
 # ----------------------------------------------------------------------------------------------------------------------
