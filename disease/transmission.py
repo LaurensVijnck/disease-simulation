@@ -86,7 +86,9 @@ class Transmission:
         inf_contacts = 0
         asymp_contacts = 0
         symp_contacts = 0
-        contact_matrix = self.__hh_contact_children if (household.has_children() and (individual.get_nursing_home() is False)) else self.__hh_contact
+        #contact_matrix = self.__hh_contact_children if (household.has_children() and (individual.get_nursing_home() is False)) else self.__hh_contact
+        # Use the function below, otherwise are children in collective/nursing homes without any household contacts
+        contact_matrix = self.__hh_contact_children if (household.has_children()) else self.__hh_contact
 
         if individual.get_nursing_home():
             delta_contacts = self.__delta_nursing_home
